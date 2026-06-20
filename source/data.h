@@ -10,42 +10,24 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-/* Sensors and actuators IDs
-
-Pedals: 0x120 b0-1: TPS1 ; b2-3: TPS2 ; b4-5: Front brake ; b6-7: Rear brake
-Steering wheel: 0x121 b0-1: Steering angle
-Speed: 0x122 b0-1: FR ; b2-3: FL ; b4-5: RR ; b6-7: RL
-Current: 0x123 b0-1: AC_D1 ; b2-3: AC_D2 ; DC_D1 ; b4-5: DC_D2 ; b6-7: DC_D3
-
-*/
-
-#define SENSORS_ID 0x120
-#define WHEEL_SPEED_ID 0x121
-#define MOTOR1_ID 0x122
-#define MOTOR2_ID 0x123
-#define STATUS_DRIVERS_ID 0x124
-#define DYNAMIC_ID 0x125
-
-#define BUTTONS_ID 0x200
-#define STATUS_ON_BOARD_ECU_ID 0x201
 
 
-typedef struct
-{
-    union
-    {
-        uint8_t raw[8];
+#define TPS_ID 0x501
+#define FRONT_DATA_ID 0x502
+#define CURRENT_DATA_ID 0x503
+#define REAR_DATA_ID 0x504
 
-        struct
-        {
-            uint16_t tps;
-            uint16_t brake_front;
-            uint16_t brake_rear;
-            uint16_t steering_angle;
-        } values;
-    };
-    volatile bool new_data;
-} sensors_data_t;
+#define DRIVER1_STATUS_ID 0x181   //TPDO1 Driver 1
+#define DRIVER2_STATUS_ID 0x182   //TPDO1 Driver 2
+
+#define MOTOR1_DATA_ID 0x281    //TPDO2 Driver 1
+#define MOTOR2_DATA_ID 0x282    //TPDO2 Driver 2
+
+#define DRIVER1_DATA_ID 0x381   //TPDO3 Driver 1
+#define DRIVER2_DATA_ID 0x382   //TPDO3 Driver 2
+
+#define MAIN_ECU_ID 0x401   
+
 
 
 typedef struct
@@ -56,30 +38,13 @@ typedef struct
 
         struct
         {
-            uint16_t wheel_speed_fl; // Front right wheel speed
-            uint16_t wheel_speed_fr; // Front left wheel speed
-            uint16_t wheel_speed_rl; // Rear left wheel speed
-            uint16_t wheel_speed_rr; // Rear right wheel speed
+            uint16_t tps_1; // Throttle position sensor 1
+            uint16_t tps_2; // Throttle position sensor 2
         } values;
     };
     volatile bool new_data;
-} speed_data_t;
-
-typedef struct
-{
-    union
-    {
-        uint8_t raw[8];
-
-        struct
-        {
-            uint16_t rpm; // Engine RPM
-            uint16_t battey_voltage; // Battery voltage
-            uint16_t battery_current; // Battery current
-        } values;
-    };
-    volatile bool new_data;
-} dynamic_data_t;
+    uint16_t can_id = TPS_ID;
+} tps_data_t;
 
 
 typedef struct
@@ -90,13 +55,104 @@ typedef struct
 
         struct
         {
-            uint16_t motor_voltage; // AC current sensor 1
-            uint16_t motor_current; // AC current sensor 2
-            uint16_t motor_temp; // DC current sensor 1
+            uint16_t front_left_speed; // Front left wheel speed
+            uint16_t front_right_speed; // Front right wheel speed
+            uint16_t direction; // Angle of the front wheels (0-360 degrees)
+            uint16_t front_brake_pressure; // Front brake pressure
         } values;
     };
     volatile bool new_data;
-} motor_data_t;
+    uint16_t can_id = FRONT_DATA_ID;
+} front_data_t;
+
+typedef struct
+{
+    union
+    {
+        uint8_t raw[8];
+
+        struct
+        {
+            uint16_t ac_current_1; // AC current sensor 1
+            uint16_t ac_current_2; // AC current sensor 2
+            uint16_t dc_current_1; // DC current sensor 1
+            uint16_t dc_current_2; // DC current sensor 2
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id = CURRENT_DATA_ID;
+} current_data_t;
+
+typedef struct
+{
+    union
+    {
+        uint8_t raw[8];
+
+        struct
+        {
+            uint16_t rear_brake_pressure; // Rear brake pressure
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id = REAR_DATA_ID;
+} rear_data_t;
+
+struct driver_status_t
+{
+    explicit driver_status_t(uint16_t id) : can_id(id) {}
+
+    union
+    {
+        uint8_t raw[8];
+        struct
+        {
+            uint16_t status_word;
+            uint16_t warning;
+            uint16_t error;
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id;
+};
+
+//TPDO2
+struct motor_data_t
+{
+    explicit motor_data_t(uint16_t id) : can_id(id) {}
+
+    union
+    {
+        uint8_t raw[8];
+        struct
+        {
+            uint16_t dc_voltage;
+            uint16_t rated_current;
+            uint8_t temp;
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id;
+};
+
+//TPDO3
+struct driver_data_t
+{
+    explicit driver_data_t(uint16_t id) : can_id(id) {}
+
+    union
+    {
+        uint8_t raw[8];
+
+        struct
+        {
+            uint8_t driver_temp; // Driver temperature
+            uint16_t driver_voltage; // Driver voltage
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id;
+};
 
 
 typedef struct
@@ -107,13 +163,14 @@ typedef struct
 
         struct
         {
-            uint8_t motor1_fault; // Motor 1 fault -> motor_fault_t
-            uint8_t motor2_fault; // Motor 2 fault
-            uint8_t drive_state; // bits 2-3: Drive state (0 = OFF, 1 = ON, 2 = FAULT)
+            uint8_t tps;
+            uint8_t mode;
+            uint8_t error_code; // Internal error code
         } values;
     };
     volatile bool new_data;
-} drivers_status_data_t;
+    uint16_t can_id = MAIN_ECU_ID; 
+} main_ecu_data_t;
 
 
 typedef struct
@@ -134,30 +191,22 @@ typedef struct
 } buttons_data_t;
 
 
-typedef struct
-{
-    union
-    {
-        uint8_t raw[8];
+extern tps_data_t tps_data;
+extern front_data_t front_data;
 
-        struct
-        {
-            uint8_t on_board_ok;
-            uint8_t can_ok;
-        } values;
-    };
-    volatile bool new_data;
-} on_board_status_data_t;
+extern current_data_t current_data;
+extern rear_data_t rear_data;
 
+extern driver_status_t driver1_status;
+extern driver_status_t driver2_status;
 
-extern sensors_data_t sensors_data;
-extern speed_data_t speed_data;
-extern dynamic_data_t dynamic_data;
 extern motor_data_t motor1_data;
 extern motor_data_t motor2_data;
-extern drivers_status_data_t drivers_status_data;
+
+extern driver_data_t driver1_data;
+extern driver_data_t driver2_data;
+
 extern buttons_data_t buttons_data;
-extern on_board_status_data_t on_board_status_data;
 
 
 

@@ -1,0 +1,2 @@
+build/source/pages.obj: source/pages.cpp
+build/source/pages.obj: source/pages.h

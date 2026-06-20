@@ -4,7 +4,7 @@
     <family>TMS570LS12x</family>
     <device>TMS570LS1224PGE</device>
     <dilfile>halcogen_on_board_ecu.dil</dilfile>
-    <tools>ti</tools>
+    <tools>arm</tools>
   </DEVICE>
   <VERSION>
     <version>04.07.01</version>

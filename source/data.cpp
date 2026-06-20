@@ -6,14 +6,23 @@
 #include <string.h>
 
 
-sensors_data_t sensors_data;
-speed_data_t speed_data;
-dynamic_data_t dynamic_data;
-motor_data_t motor1_data;
-motor_data_t motor2_data;
-drivers_status_data_t drivers_status_data;
+tps_data_t tps_data;
+front_data_t front_data;
+
+current_data_t current_data;
+rear_data_t rear_data;
+
+driver_status_t driver1_status(DRIVER1_STATUS_ID);
+driver_status_t driver2_status(DRIVER2_STATUS_ID);
+
+motor_data_t motor1_data(MOTOR1_DATA_ID);
+motor_data_t motor2_data(MOTOR2_DATA_ID);
+
+driver_data_t driver1_data(DRIVER1_DATA_ID);
+driver_data_t driver2_data(DRIVER2_DATA_ID);
+
 buttons_data_t buttons_data;
-on_board_status_data_t on_board_status_data;
+
 
 
 void init_data(void)
@@ -35,56 +44,86 @@ void update_data(void)
 {
     // This function can be used to perform any periodic updates or checks for the drivers if needed
     // Send data of buttons status to dashboard
-    if(sensors_data.new_data)
+    if(tps_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX1, sensors_data.raw);
-        dashboard_data.tps = (float)sensors_data.values.tps;
-        dashboard_data.brake_front = (float)sensors_data.values.brake_front;
-        dashboard_data.brake_rear = (float)sensors_data.values.brake_rear;
-        dashboard_data.steering_angle = (float)sensors_data.values.steering_angle;
-        sensors_data.new_data = false;
+        canGetData(canREG1, canMESSAGE_BOX1, tps_data.raw);
+        dashboard_data.tps_1 = (float)tps_data.values.tps_1;
+        dashboard_data.tps_2 = (float)tps_data.values.tps_2;
+        dashboard_data.tps = (dashboard_data.tps_1 + dashboard_data.tps_2) / 2.0f; // Average of both TPS sensors
+        tps_data.new_data = false;
     }
-    if(speed_data.new_data)
+    if(front_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX2, speed_data.raw);
-        dashboard_data.wheel_speed_fl = (float)speed_data.values.wheel_speed_fl;
-        dashboard_data.wheel_speed_fr = (float)speed_data.values.wheel_speed_fr;
-        dashboard_data.wheel_speed_rl = (float)speed_data.values.wheel_speed_rl;
-        dashboard_data.wheel_speed_rr = (float)speed_data.values.wheel_speed_rr;
-        speed_data.new_data = false;
+        canGetData(canREG1, canMESSAGE_BOX2, front_data.raw);
+        dashboard_data.wheel_speed_fl = (float)front_data.values.front_left_speed;
+        dashboard_data.wheel_speed_fr = (float)front_data.values.front_right_speed;
+        dashboard_data.steering_angle = (float)front_data.values.direction; // Assuming direction is in degrees
+        dashboard_data.brake_front = (float)front_data.values.front_brake_pressure;
+        front_data.new_data = false;
+    }
+    if(current_data.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX3, current_data.raw);
+        dashboard_data.motor1_ac_current = (float)current_data.values.ac_current_1;
+        dashboard_data.motor1_dc_current = (float)current_data.values.dc_current_1;
+        dashboard_data.motor2_ac_current = (float)current_data.values.ac_current_2;
+        dashboard_data.motor2_dc_current = (float)current_data.values.dc_current_2;
+        current_data.new_data = false;
+    }
+    if(rear_data.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX4, rear_data.raw);
+        dashboard_data.brake_rear = (float)rear_data.values.rear_brake_pressure;
+        rear_data.new_data = false;
+    }
+    if(driver1_status.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX5, driver1_status.raw);
+        dashboard_data.driver1_warning = driver1_status.values.warning;
+        dashboard_data.driver1_error = driver1_status.values.error;
+        driver1_status.new_data = false;
+    }
+    if(driver2_status.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX6, driver2_status.raw);
+        dashboard_data.driver2_warning = driver2_status.values.warning;
+        dashboard_data.driver2_error = driver2_status.values.error;
+        driver2_status.new_data = false;
     }
     if(motor1_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX3, motor1_data.raw);
-        dashboard_data.motor1_voltage = (float)motor1_data.values.motor_voltage;
-        dashboard_data.motor1_current = (float)motor1_data.values.motor_current;
-        dashboard_data.motor1_temp = (float)motor1_data.values.motor_temp;
+        canGetData(canREG1, canMESSAGE_BOX7, motor1_data.raw);
+        dashboard_data.motor1_dc_voltage = (float)motor1_data.values.dc_voltage;
+        dashboard_data.motor1_temp = (float)motor1_data.values.temp;
         motor1_data.new_data = false;
     }
     if(motor2_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX4, motor2_data.raw);
-        dashboard_data.motor2_voltage = (float)motor2_data.values.motor_voltage;
-        dashboard_data.motor2_current = (float)motor2_data.values.motor_current;
-        dashboard_data.motor2_temp = (float)motor2_data.values.motor_temp;
+        canGetData(canREG1, canMESSAGE_BOX8, motor2_data.raw);
+        dashboard_data.motor2_dc_voltage = (float)motor2_data.values.dc_voltage;
+        dashboard_data.motor2_temp = (float)motor2_data.values.temp;
         motor2_data.new_data = false;
     }
-    if(drivers_status_data.new_data)
+    if(driver1_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX5, drivers_status_data.raw);
-        dashboard_data.motor1_fault = drivers_status_data.values.motor1_fault;
-        dashboard_data.motor2_fault = drivers_status_data.values.motor2_fault;
-        dashboard_data.drive_state = drivers_status_data.values.drive_state;
-        drivers_status_data.new_data = false;
+        canGetData(canREG1, canMESSAGE_BOX9, driver1_data.raw);
+        dashboard_data.driver1_temp = (float)driver1_data.values.driver_temp;
+        dashboard_data.driver1_voltage = (float)driver1_data.values.driver_voltage;
+        driver1_data.new_data = false;
     }
-    if(dynamic_data.new_data)
+    if(driver2_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX6, dynamic_data.raw);
-        dashboard_data.rpm = (float)dynamic_data.values.rpm;
-        dashboard_data.battery_voltage = (float)dynamic_data.values.battey_voltage;
-        dashboard_data.battery_current = (float)dynamic_data.values.battery_current;
-        dynamic_data.new_data = false;
+        canGetData(canREG1, canMESSAGE_BOX10, driver2_data.raw);
+        dashboard_data.driver2_temp = (float)driver2_data.values.driver_temp;
+        dashboard_data.driver2_voltage = (float)driver2_data.values.driver_voltage;
+        driver2_data.new_data = false;
     }
+
+    // Process data
+    dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
+    dashboard_data.battery_voltage = (dashboard_data.motor1_dc_voltage + dashboard_data.motor2_dc_voltage) / 2.0f;
+    dashboard_data.battery_current = (dashboard_data.motor1_dc_current + dashboard_data.motor2_dc_current);
+    
 
 
     // Send buttons status to dashboard
@@ -92,12 +131,8 @@ void update_data(void)
     buttons_data.values.traction_on = dashboard_data.traction_on;
     buttons_data.values.telemetry_enabled = dashboard_data.telemetry_enabled;
     buttons_data.values.mode = dashboard_data.mode;
-    canTransmit(canREG1, canMESSAGE_BOX9, buttons_data.raw);
+    canTransmit(canREG1, canMESSAGE_BOX11, buttons_data.raw);
 
-    // Send on-board ECU status to dashboard
-    on_board_status_data.values.on_board_ok = 1; // Assuming the ECU is always OK for this example
-    on_board_status_data.values.can_ok = 1; // Assuming CAN is always OK for this example
-    canTransmit(canREG1, canMESSAGE_BOX10, on_board_status_data.raw);
 
 }
 

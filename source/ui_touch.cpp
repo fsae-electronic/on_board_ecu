@@ -213,16 +213,16 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 2: data->mode = !data->mode; break;
                 case 3: data->drive_enabled = !data->drive_enabled; break;
 
-                case 10: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_V; break;
-                case 11: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_I; break;
-                case 12: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_T; break;
-                case 13: current_page = PAGE_GRAPH; current_graph = GRAPH_BAT_V; break;
-                case 14: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_V; break;
-                case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_I; break;
-                case 16: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_T; break;
-                case 17: current_page = PAGE_GRAPH; current_graph = GRAPH_BAT_I; break;
-                case 18: current_page = PAGE_GRAPH; current_graph = GRAPH_STEER; break;
-                case 19: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
+                case 10: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_VDC; break;
+                case 11: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_IDC; break;
+                case 12: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_IAC; break;
+                case 13: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_T; break;
+                case 14: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_VDC; break;
+                case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IDC; break;
+                case 16: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IAC; break;
+                case 17: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_T; break;
+                case 18: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
+                case 19: current_page = PAGE_GRAPH; current_graph = GRAPH_STEER; break;
                 case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_FRONT_BRK; break;
                 case 21: current_page = PAGE_GRAPH; current_graph = GRAPH_REAR_BRK; break;
                 case 22: current_page = PAGE_GRAPH; current_graph = GRAPH_FL_SPD; break;

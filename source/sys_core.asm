@@ -35,8 +35,8 @@
 ;
 ;
 
-    .text
-    .arm
+    area |.text|, code, readonly
+    arm
 
 ;-------------------------------------------------------------------------------
 ; Initialize CPU Registers
@@ -44,8 +44,8 @@
 ; DesignId : CORE_DesignId_001
 ; Requirements: HL_SR477, HL_SR476, HL_SR492
 
-    .def     _coreInitRegisters_
-    .asmfunc
+    export     _coreInitRegisters_
+    
 
 
 _coreInitRegisters_
@@ -132,7 +132,7 @@ next3
 next4
         bx    r0
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -141,8 +141,8 @@ next4
 ; DesignId : CORE_DesignId_002
 ; Requirements: HL_SR478
 
-    .def     _coreInitStackPointer_
-    .asmfunc
+    export     _coreInitStackPointer_
+    
 
 _coreInitStackPointer_
 
@@ -160,14 +160,14 @@ _coreInitStackPointer_
         ldr   sp,       userSp
         bx    lr
 
-userSp  .word 0x08000000+0x00001000
-svcSp   .word 0x08000000+0x00001000+0x00000100
-fiqSp   .word 0x08000000+0x00001000+0x00000100+0x00000100
-irqSp   .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100
-abortSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100
-undefSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100+0x00000100
+userSp  dcd 0x08000000+0x00001000
+svcSp   dcd 0x08000000+0x00001000+0x00000100
+fiqSp   dcd 0x08000000+0x00001000+0x00000100+0x00000100
+irqSp   dcd 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100
+abortSp dcd 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100
+undefSp dcd 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100+0x00000100
 
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Get CPSR Value
@@ -175,15 +175,15 @@ undefSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100+
 ; DesignId : CORE_DesignId_003
 ; Requirements:
 
-    .def     _getCPSRValue_
-    .asmfunc
+    export     _getCPSRValue_
+    
 
 _getCPSRValue_
 
         mrs   r0, CPSR
         bx    lr
 
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Take CPU to IDLE state
@@ -191,8 +191,8 @@ _getCPSRValue_
 ; DesignId : CORE_DesignId_004
 ; Requirements: HL_SR493
 
-    .def     _gotoCPUIdle_
-    .asmfunc
+    export     _gotoCPUIdle_
+    
 
 _gotoCPUIdle_
 
@@ -203,7 +203,7 @@ _gotoCPUIdle_
         nop
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -212,8 +212,8 @@ _gotoCPUIdle_
 ; DesignId : CORE_DesignId_006
 ; Requirements: HL_SR492, HL_SR476
 
-    .def     _coreEnableVfp_
-    .asmfunc
+    export     _coreEnableVfp_
+    
 
 _coreEnableVfp_
 
@@ -224,7 +224,7 @@ _coreEnableVfp_
         fmxr  fpexc,   r0
         bx    lr
 
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Enable Event Bus Export
@@ -232,8 +232,8 @@ _coreEnableVfp_
 ; DesignId : CORE_DesignId_007
 ; Requirements: HL_SR479
 
-    .def     _coreEnableEventBusExport_
-    .asmfunc
+    export     _coreEnableEventBusExport_
+    
 
 _coreEnableEventBusExport_
 
@@ -242,7 +242,7 @@ _coreEnableEventBusExport_
         mcr   p15, #0x00, r0,         c9, c12, #0x00
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -252,8 +252,8 @@ _coreEnableEventBusExport_
 ; Requirements: HL_SR481
 
 
-    .def     _coreDisableEventBusExport_
-    .asmfunc
+    export     _coreDisableEventBusExport_
+    
 
 _coreDisableEventBusExport_
 
@@ -262,7 +262,7 @@ _coreDisableEventBusExport_
         mcr   p15, #0x00, r0,         c9, c12, #0x00
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -271,8 +271,8 @@ _coreDisableEventBusExport_
 ; DesignId : CORE_DesignId_009
 ; Requirements: HL_SR480
 
-    .def     _coreEnableRamEcc_
-    .asmfunc
+    export     _coreEnableRamEcc_
+    
 
 _coreEnableRamEcc_
 
@@ -281,7 +281,7 @@ _coreEnableRamEcc_
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -290,8 +290,8 @@ _coreEnableRamEcc_
 ; DesignId : CORE_DesignId_010
 ; Requirements: HL_SR482
 
-    .def     _coreDisableRamEcc_
-    .asmfunc
+    export     _coreDisableRamEcc_
+    
 
 _coreDisableRamEcc_
 
@@ -300,7 +300,7 @@ _coreDisableRamEcc_
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -309,8 +309,8 @@ _coreDisableRamEcc_
 ; DesignId : CORE_DesignId_011
 ; Requirements: HL_SR480, HL_SR458
 
-    .def     _coreEnableFlashEcc_
-    .asmfunc
+    export     _coreEnableFlashEcc_
+    
 
 _coreEnableFlashEcc_
 
@@ -320,7 +320,7 @@ _coreEnableFlashEcc_
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -329,8 +329,8 @@ _coreEnableFlashEcc_
 ; DesignId : CORE_DesignId_012
 ; Requirements: HL_SR482
 
-    .def     _coreDisableFlashEcc_
-    .asmfunc
+    export     _coreDisableFlashEcc_
+    
 
 _coreDisableFlashEcc_
 
@@ -339,7 +339,7 @@ _coreDisableFlashEcc_
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -348,8 +348,8 @@ _coreDisableFlashEcc_
 ; DesignId : CORE_DesignId_005
 ; Requirements: HL_SR483, HL_SR491
 
-    .def     _coreEnableIrqVicOffset_
-    .asmfunc
+    export     _coreEnableIrqVicOffset_
+    
 
 _coreEnableIrqVicOffset_
 
@@ -358,7 +358,7 @@ _coreEnableIrqVicOffset_
         mcr   p15, #0, r0,         c1, c0,  #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -367,15 +367,15 @@ _coreEnableIrqVicOffset_
 ; DesignId : CORE_DesignId_013
 ; Requirements: HL_SR495
 
-    .def     _coreGetDataFault_
-    .asmfunc
+    export     _coreGetDataFault_
+    
 
 _coreGetDataFault_
 
         mrc   p15, #0, r0, c5, c0,  #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -384,8 +384,8 @@ _coreGetDataFault_
 ; DesignId : CORE_DesignId_014
 ; Requirements: HL_SR495
 
-    .def     _coreClearDataFault_
-    .asmfunc
+    export     _coreClearDataFault_
+    
 
 _coreClearDataFault_
 
@@ -393,7 +393,7 @@ _coreClearDataFault_
         mcr   p15, #0, r0, c5, c0,  #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -402,15 +402,15 @@ _coreClearDataFault_
 ; DesignId : CORE_DesignId_015
 ; Requirements: HL_SR495
 
-    .def     _coreGetInstructionFault_
-    .asmfunc
+    export     _coreGetInstructionFault_
+    
 
 _coreGetInstructionFault_
 
         mrc   p15, #0, r0, c5, c0, #1
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -419,8 +419,8 @@ _coreGetInstructionFault_
 ; DesignId : CORE_DesignId_016
 ; Requirements: HL_SR495
 
-    .def     _coreClearInstructionFault_
-    .asmfunc
+    export     _coreClearInstructionFault_
+    
 
 _coreClearInstructionFault_
 
@@ -428,7 +428,7 @@ _coreClearInstructionFault_
         mcr   p15, #0, r0, c5, c0, #1
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -437,15 +437,15 @@ _coreClearInstructionFault_
 ; DesignId : CORE_DesignId_017
 ; Requirements: HL_SR495
 
-    .def     _coreGetDataFaultAddress_
-    .asmfunc
+    export     _coreGetDataFaultAddress_
+    
 
 _coreGetDataFaultAddress_
 
         mrc   p15, #0, r0, c6, c0,  #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -454,8 +454,8 @@ _coreGetDataFaultAddress_
 ; DesignId : CORE_DesignId_018
 ; Requirements: HL_SR495
 
-    .def     _coreClearDataFaultAddress_
-    .asmfunc
+    export     _coreClearDataFaultAddress_
+    
 
 _coreClearDataFaultAddress_
 
@@ -463,7 +463,7 @@ _coreClearDataFaultAddress_
         mcr   p15, #0, r0, c6, c0,  #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -472,15 +472,15 @@ _coreClearDataFaultAddress_
 ; DesignId : CORE_DesignId_019
 ; Requirements: HL_SR495
 
-    .def     _coreGetInstructionFaultAddress_
-    .asmfunc
+    export     _coreGetInstructionFaultAddress_
+    
 
 _coreGetInstructionFaultAddress_
 
         mrc   p15, #0, r0, c6, c0, #2
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -489,8 +489,8 @@ _coreGetInstructionFaultAddress_
 ; DesignId : CORE_DesignId_020
 ; Requirements: HL_SR495
 
-    .def     _coreClearInstructionFaultAddress_
-    .asmfunc
+    export     _coreClearInstructionFaultAddress_
+    
 
 _coreClearInstructionFaultAddress_
 
@@ -498,7 +498,7 @@ _coreClearInstructionFaultAddress_
         mcr   p15, #0, r0, c6, c0, #2
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -507,15 +507,15 @@ _coreClearInstructionFaultAddress_
 ; DesignId : CORE_DesignId_021
 ; Requirements: HL_SR496
 
-    .def     _coreGetAuxiliaryDataFault_
-    .asmfunc
+    export     _coreGetAuxiliaryDataFault_
+    
 
 _coreGetAuxiliaryDataFault_
 
         mrc   p15, #0, r0, c5, c1, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -524,8 +524,8 @@ _coreGetAuxiliaryDataFault_
 ; DesignId : CORE_DesignId_022
 ; Requirements: HL_SR496
 
-    .def     _coreClearAuxiliaryDataFault_
-    .asmfunc
+    export     _coreClearAuxiliaryDataFault_
+    
 
 _coreClearAuxiliaryDataFault_
 
@@ -533,7 +533,7 @@ _coreClearAuxiliaryDataFault_
         mcr   p15, #0, r0, c5, c1, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -542,15 +542,15 @@ _coreClearAuxiliaryDataFault_
 ; DesignId : CORE_DesignId_023
 ; Requirements: HL_SR496
 
-    .def     _coreGetAuxiliaryInstructionFault_
-    .asmfunc
+    export     _coreGetAuxiliaryInstructionFault_
+    
 
 _coreGetAuxiliaryInstructionFault_
 
         mrc   p15, #0, r0, c5, c1, #1
         bx    lr
 
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Clear auxiliary instruction fault status register
@@ -558,8 +558,8 @@ _coreGetAuxiliaryInstructionFault_
 ; DesignId : CORE_DesignId_024
 ; Requirements: HL_SR496
 
-    .def     _coreClearAuxiliaryInstructionFault_
-    .asmfunc
+    export     _coreClearAuxiliaryInstructionFault_
+    
 
 _coreClearAuxiliaryInstructionFault_
 
@@ -567,7 +567,7 @@ _coreClearAuxiliaryInstructionFault_
         mrc   p15, #0, r0, c5, c1, #1
         bx    lr
 
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Disable interrupts - R4 IRQ & FIQ
@@ -575,15 +575,15 @@ _coreClearAuxiliaryInstructionFault_
 ; DesignId : CORE_DesignId_025
 ; Requirements: HL_SR494
 
-        .def _disable_interrupt_
-        .asmfunc
+        export _disable_interrupt_
+        
 
 _disable_interrupt_
 
         cpsid if
         bx    lr
 
-        .endasmfunc
+        
 
 ;-------------------------------------------------------------------------------
 ; Disable FIQ interrupt
@@ -591,48 +591,48 @@ _disable_interrupt_
 ; DesignId : CORE_DesignId_026
 ; Requirements: HL_SR494
 
-        .def _disable_FIQ_interrupt_
-        .asmfunc
+        export _disable_FIQ_interrupt_
+        
 
 _disable_FIQ_interrupt_
 
         cpsid f
         bx    lr
 
-        .endasmfunc
+        
 
 ;-------------------------------------------------------------------------------
 ; Disable FIQ interrupt
 
-        .def _disable_IRQ_interrupt_
-        .asmfunc
+        export _disable_IRQ_interrupt_
+        
 
 _disable_IRQ_interrupt_
 
         cpsid i
         bx    lr
 
-        .endasmfunc
+        
 
 ;-------------------------------------------------------------------------------
 ; Enable interrupts - R4 IRQ & FIQ
 
-       .def _enable_interrupt_
-       .asmfunc
+       export _enable_interrupt_
+       
 
 _enable_interrupt_
 
         cpsie if
         bx    lr
 
-        .endasmfunc
+        
 
 
 ;-------------------------------------------------------------------------------
 ; Clear ESM CCM errorss
 
-       .def _esmCcmErrorsClear_
-       .asmfunc
+       export _esmCcmErrorsClear_
+       
 
 _esmCcmErrorsClear_
 
@@ -662,21 +662,21 @@ _esmCcmErrorsClear_
         ldmfd sp!, {r0-r2}
         bx    lr
 
-ESMSR1_REG        .word 0xFFFFF518
-ESMSR2_REG        .word 0xFFFFF51C
-ESMSR3_REG        .word 0xFFFFF520
-ESMKEY_REG        .word 0xFFFFF538
-ESMSSR2_REG       .word 0xFFFFF53C
-CCMR4_STAT_REG    .word 0xFFFFF600
-ERR_CLR_WRD       .word 0xFFFFFFFF
-CCMR4_ERR_CLR     .word 0x00010000
-ESMSR1_ERR_CLR    .word 0x80000000
-ESMSR2_ERR_CLR    .word 0x00000004
-ESMSSR2_ERR_CLR   .word 0x00000004
-VIM_INT_CLR       .word 0x00000001
-VIM_INTREQ        .word 0xFFFFFE20
+ESMSR1_REG        dcd 0xFFFFF518
+ESMSR2_REG        dcd 0xFFFFF51C
+ESMSR3_REG        dcd 0xFFFFF520
+ESMKEY_REG        dcd 0xFFFFF538
+ESMSSR2_REG       dcd 0xFFFFF53C
+CCMR4_STAT_REG    dcd 0xFFFFF600
+ERR_CLR_WRD       dcd 0xFFFFFFFF
+CCMR4_ERR_CLR     dcd 0x00010000
+ESMSR1_ERR_CLR    dcd 0x80000000
+ESMSR2_ERR_CLR    dcd 0x00000004
+ESMSSR2_ERR_CLR   dcd 0x00000004
+VIM_INT_CLR       dcd 0x00000001
+VIM_INTREQ        dcd 0xFFFFFE20
 
-        .endasmfunc
+        
 
 ;-------------------------------------------------------------------------------
 ; Work Around for Errata CORTEX-R4#57:
@@ -687,8 +687,8 @@ VIM_INTREQ        .word 0xFFFFFE20
 ;            Disable out-of-order single-precision floating point
 ;            multiply-accumulate instruction completion
 
-        .def     _errata_CORTEXR4_57_
-        .asmfunc
+        export     _errata_CORTEXR4_57_
+        
 
 _errata_CORTEXR4_57_
 
@@ -696,7 +696,7 @@ _errata_CORTEXR4_57_
         orr r0, r0, #0x10000         ; Set BIT 16 (Set DOOFMACS)
         mcr p15, #0, r0, c15, c0, #0 ; Write Secondary Auxiliary Control Register
         bx lr
-    .endasmfunc
+    
 
 ;-------------------------------------------------------------------------------
 ; Work Around for Errata CORTEX-R4#66:
@@ -708,8 +708,8 @@ _errata_CORTEXR4_57_
 ;            Disable out-of-order completion for divide instructions in
 ;            Auxiliary Control register
 
-        .def     _errata_CORTEXR4_66_
-        .asmfunc
+        export     _errata_CORTEXR4_66_
+        
 
 _errata_CORTEXR4_66_
 
@@ -718,17 +718,10 @@ _errata_CORTEXR4_66_
                                     ; for divide instructions.)
            mcr p15, #0, r0, c1, c0, #1 ; Write Auxiliary Control register
         bx lr
-    .endasmfunc
-;-------------------------------------------------------------------------------
-; C++ construct table pointers
-
-    .def    __TI_PINIT_Base, __TI_PINIT_Limit
-    .weak   SHT$$INIT_ARRAY$$Base, SHT$$INIT_ARRAY$$Limit
-
-__TI_PINIT_Base  .long SHT$$INIT_ARRAY$$Base
-__TI_PINIT_Limit .long SHT$$INIT_ARRAY$$Limit
-
-
     
+;-------------------------------------------------------------------------------
+
+
+    end
 ;-------------------------------------------------------------------------------
 

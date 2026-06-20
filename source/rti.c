@@ -52,7 +52,6 @@
 /* Include Files */
 
 #include "rti.h"
-#include "sys_vim.h"
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
@@ -853,8 +852,7 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 *   RTI1 Compare 0 interrupt handler 
 *
 */
-#pragma CODE_STATE(rtiCompare0Interrupt, 32)
-#pragma INTERRUPT(rtiCompare0Interrupt, IRQ)
+IRQ
 
 /* SourceId : RTI_SourceId_022 */
 /* DesignId : RTI_DesignId_022 */
@@ -880,8 +878,7 @@ void rtiCompare0Interrupt(void)
 *   RTI1 Compare 1 interrupt handler 
 *
 */
-#pragma CODE_STATE(rtiCompare1Interrupt, 32)
-#pragma INTERRUPT(rtiCompare1Interrupt, IRQ)
+IRQ
 
 /* SourceId : RTI_SourceId_023 */
 /* DesignId : RTI_DesignId_022 */
@@ -908,8 +905,7 @@ void rtiCompare1Interrupt(void)
 *   RTI1 Compare 2 interrupt handler 
 *
 */
-#pragma CODE_STATE(rtiCompare2Interrupt, 32)
-#pragma INTERRUPT(rtiCompare2Interrupt, IRQ)
+IRQ
 
 /* SourceId : RTI_SourceId_024 */
 /* DesignId : RTI_DesignId_022 */
@@ -936,8 +932,7 @@ void rtiCompare2Interrupt(void)
 *   RTI1 Compare 3 interrupt handler 
 *
 */
-#pragma CODE_STATE(rtiCompare3Interrupt, 32)
-#pragma INTERRUPT(rtiCompare3Interrupt, IRQ)
+IRQ
 
 /* SourceId : RTI_SourceId_025 */
 /* DesignId : RTI_DesignId_022 */

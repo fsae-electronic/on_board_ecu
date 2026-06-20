@@ -42,7 +42,6 @@
 /* USER CODE END */
 
 #include "spi.h"
-#include "sys_vim.h"
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 

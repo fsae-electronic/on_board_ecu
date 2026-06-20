@@ -197,6 +197,7 @@ static const t_isrFuncPTR s_vim_init[128U] =
     &phantomInterrupt,            /* Channel 125 */
     &phantomInterrupt,            /* Channel 126 */
 };
+IRQ
 void vimParityErrorHandler(void);
 
 /** @fn void vimInit(void)
@@ -753,9 +754,7 @@ void vimGetConfigValue(vim_config_reg_t *config_reg, config_value_type_t type)
 }
 
 
-#pragma CODE_STATE(vimParityErrorHandler, 32)
-#pragma INTERRUPT(vimParityErrorHandler, IRQ)
-#pragma WEAK(vimParityErrorHandler)
+IRQ
 
 /* SourceId : VIM_SourceId_006 */
 /* DesignId : VIM_DesignId_006 */

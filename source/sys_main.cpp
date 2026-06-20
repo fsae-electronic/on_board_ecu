@@ -98,22 +98,34 @@ void canMessageNotification(canBASE_t *node, uint32 messageBox)
         switch(messageBox)
         {
             case canMESSAGE_BOX1:
-                sensors_data.new_data = true;
+                tps_data.new_data = true;
                 break;
             case canMESSAGE_BOX2:
-                speed_data.new_data = true;
+                front_data.new_data = true;
                 break;
             case canMESSAGE_BOX3:
-                motor1_data.new_data = true;
+                current_data.new_data = true;
                 break;
             case canMESSAGE_BOX4:
-                motor2_data.new_data = true;
+                rear_data.new_data = true;
                 break;
             case canMESSAGE_BOX5:
-                drivers_status_data.new_data = true;
+                driver1_status.new_data = true;
                 break;
             case canMESSAGE_BOX6:
-                dynamic_data.new_data = true;
+                driver2_status.new_data = true;
+                break;
+            case canMESSAGE_BOX7:
+                motor1_data.new_data = true;
+                break;
+            case canMESSAGE_BOX8:
+                motor2_data.new_data = true;
+                break;
+            case canMESSAGE_BOX9:
+                driver1_data.new_data = true;
+                break;
+            case canMESSAGE_BOX10:
+                driver2_data.new_data = true;
                 break;
             default:
                 // Handle other message boxes if needed

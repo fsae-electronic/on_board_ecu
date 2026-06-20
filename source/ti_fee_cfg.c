@@ -104,7 +104,7 @@ const Fee_BlockConfigType Fee_BlockConfiguration[TI_FEE_NUMBER_OF_BLOCKS] =
         /*      Block 1 */
         {
                /* Block number                          */     1U, 
-               /* Block size                            */     32U,
+               /* Block size                            */     8U,
                /* Block immediate data used             */     TRUE,			   
                /* Number of write cycles                */     0x8U,
                /* Device Index                          */     0x00000000U,

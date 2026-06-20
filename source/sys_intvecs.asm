@@ -35,16 +35,16 @@
 ;
 ;
 
-    .sect ".intvecs"
-    .arm
+    area intvecs, code, readonly
+    arm
 
 ;-------------------------------------------------------------------------------
 ; import reference for interrupt routines
 
-    .ref _c_int00
-    .ref _dabort
-    .ref phantomInterrupt
-    .def resetEntry
+    import _c_int00
+    import _dabort
+    import phantomInterrupt
+    export resetEntry
 
 ;-------------------------------------------------------------------------------
 ; interrupt vectors
@@ -62,5 +62,5 @@ prefetchEntry
         ldr pc,[pc,#-0x1b0]
         ldr pc,[pc,#-0x1b0]
 
-    
+    end
 ;-------------------------------------------------------------------------------

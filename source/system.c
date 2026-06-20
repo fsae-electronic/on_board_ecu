@@ -474,7 +474,7 @@ void systemPowerDown(uint32 mode)
     systemREG1->CDDIS = (mode >> 8U) & 0x00000FFFU;
 
     /* Idle CPU */
-    _gotoCPUIdle_();
+    __wfi();
 
 /* USER CODE BEGIN (27) */
 /* USER CODE END */

@@ -1,0 +1,16 @@
+build/source/can.obj: source/can.c
+build/source/can.obj: /home/asolari/tesis_ecu/on_board_ecu/include/can.h
+build/source/can.obj: /home/asolari/tesis_ecu/on_board_ecu/include/reg_can.h
+build/source/can.obj: /home/asolari/tesis_ecu/on_board_ecu/include/sys_common.h
+build/source/can.obj: /home/asolari/tesis_ecu/on_board_ecu/include/hal_stdtypes.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/stdint.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/linkage.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/_stdint40.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/sys/stdint.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/sys/cdefs.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/sys/_types.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/machine/_types.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
+build/source/can.obj: /home/asolari/ti-cgt-arm_20.2.7.LTS/include/stdbool.h

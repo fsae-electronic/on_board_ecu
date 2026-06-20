@@ -44,7 +44,6 @@
 /* USER CODE END */
 
 #include "sci.h"
-#include "sys_vim.h"
 #include "math.h"
 
 /* USER CODE BEGIN (1) */
@@ -668,8 +667,7 @@ void sciGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type)
 /** @fn void sciHighLevelInterrupt(void)
 *   @brief Level 0 Interrupt for SCI
 */
-#pragma CODE_STATE(sciHighLevelInterrupt, 32)
-#pragma INTERRUPT(sciHighLevelInterrupt, IRQ)
+IRQ
 
 /* SourceId : SCI_SourceId_018 */
 /* DesignId : SCI_DesignId_017 */
@@ -749,8 +747,7 @@ void sciHighLevelInterrupt(void)
 /** @fn void sciLowLevelInterrupt(void)
 *   @brief Level 1 Interrupt for SCI
 */
-#pragma CODE_STATE(sciLowLevelInterrupt, 32)
-#pragma INTERRUPT(sciLowLevelInterrupt, IRQ)
+IRQ
 
 /* SourceId : SCI_SourceId_019 */
 /* DesignId : SCI_DesignId_017 */

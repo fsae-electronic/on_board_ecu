@@ -35,8 +35,8 @@
 ;
 ;
 
-    .text
-    .arm
+    area |.text|, code, readonly
+    arm
 
 
 ;-------------------------------------------------------------------------------
@@ -45,8 +45,8 @@
 ; DesignId : MPU_DesignId_001
 ; Requirements : HL_SR487
 
-    .def     _mpuInit_
-    .asmfunc
+    export     _mpuInit_
+    
 
 _mpuInit_
         ; Disable mpu
@@ -193,20 +193,20 @@ _mpuInit_
         isb
         bx    lr
 
-r1Base  .word 0x00000000
-r2Base  .word 0x00000000
-r3Base  .word 0x08000000
-r4Base  .word 0x08400000
-r5Base  .word 0x60000000
-r6Base  .word 0x80000000
-r7Base  .word 0xF0000000
-r8Base  .word 0xFC000000
-r9Base  .word 0xFE000000
-r10Base  .word 0xFF000000
-r11Base  .word 0x08001000
-r12Base  .word 0x20000000
+r1Base  dcd 0x00000000
+r2Base  dcd 0x00000000
+r3Base  dcd 0x08000000
+r4Base  dcd 0x08400000
+r5Base  dcd 0x60000000
+r6Base  dcd 0x80000000
+r7Base  dcd 0xF0000000
+r8Base  dcd 0xFC000000
+r9Base  dcd 0xFE000000
+r10Base  dcd 0xFF000000
+r11Base  dcd 0x08001000
+r12Base  dcd 0x20000000
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -215,8 +215,8 @@ r12Base  .word 0x20000000
 ; DesignId : MPU_DesignId_002
 ; Requirements : HL_SR488
 
-    .def     _mpuEnable_
-    .asmfunc
+    export     _mpuEnable_
+    
 
 _mpuEnable_
 
@@ -227,7 +227,7 @@ _mpuEnable_
         isb
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -236,8 +236,8 @@ _mpuEnable_
 ; DesignId : MPU_DesignId_003
 ; Requirements : HL_SR488
 
-    .def     _mpuDisable_
-    .asmfunc
+    export     _mpuDisable_
+    
 
 _mpuDisable_
 
@@ -248,7 +248,7 @@ _mpuDisable_
         isb
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -257,8 +257,8 @@ _mpuDisable_
 ; DesignId : MPU_DesignId_004
 ; Requirements : HL_SR488
 
-    .def     _mpuEnableBackgroundRegion_
-    .asmfunc
+    export     _mpuEnableBackgroundRegion_
+    
 
 _mpuEnableBackgroundRegion_
 
@@ -267,7 +267,7 @@ _mpuEnableBackgroundRegion_
         mcr   p15, #0, r0,      c1, c0, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -276,8 +276,8 @@ _mpuEnableBackgroundRegion_
 ; DesignId : MPU_DesignId_005
 ; Requirements : HL_SR488
 
-    .def     _mpuDisableBackgroundRegion_
-    .asmfunc
+    export     _mpuDisableBackgroundRegion_
+    
 
 _mpuDisableBackgroundRegion_
 
@@ -286,7 +286,7 @@ _mpuDisableBackgroundRegion_
         mcr   p15, #0, r0,      c1, c0, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -295,8 +295,8 @@ _mpuDisableBackgroundRegion_
 ; DesignId : MPU_DesignId_006
 ; Requirements : HL_SR490
 
-    .def     _mpuGetNumberOfRegions_
-    .asmfunc
+    export     _mpuGetNumberOfRegions_
+    
 
 _mpuGetNumberOfRegions_
 
@@ -304,7 +304,7 @@ _mpuGetNumberOfRegions_
         uxtb  r0,  r0, ROR #8
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -313,8 +313,8 @@ _mpuGetNumberOfRegions_
 ; DesignId : MPU_DesignId_007
 ; Requirements : HL_SR490
 
-    .def     _mpuAreRegionsSeparate_
-    .asmfunc
+    export     _mpuAreRegionsSeparate_
+    
 
 _mpuAreRegionsSeparate_
 
@@ -322,7 +322,7 @@ _mpuAreRegionsSeparate_
         uxtb  r0,  r0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -331,15 +331,15 @@ _mpuAreRegionsSeparate_
 ; DesignId : MPU_DesignId_008
 ; Requirements : HL_SR489
 
-    .def     _mpuSetRegion_
-    .asmfunc
+    export     _mpuSetRegion_
+    
 
 _mpuSetRegion_
 
         mcr   p15, #0, r0, c6, c2, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -348,15 +348,15 @@ _mpuSetRegion_
 ; DesignId : MPU_DesignId_009
 ; Requirements : HL_SR490
 
-    .def     _mpuGetRegion_
-    .asmfunc
+    export     _mpuGetRegion_
+    
 
 _mpuGetRegion_
 
         mrc   p15, #0, r0, c6, c2, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -365,15 +365,15 @@ _mpuGetRegion_
 ; DesignId : MPU_DesignId_010
 ; Requirements : HL_SR489
 
-    .def     _mpuSetRegionBaseAddress_
-    .asmfunc
+    export     _mpuSetRegionBaseAddress_
+    
 
 _mpuSetRegionBaseAddress_
 
         mcr   p15, #0, r0, c6, c1, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -382,15 +382,15 @@ _mpuSetRegionBaseAddress_
 ; DesignId : MPU_DesignId_011
 ; Requirements : HL_SR490
 
-    .def     _mpuGetRegionBaseAddress_
-    .asmfunc
+    export     _mpuGetRegionBaseAddress_
+    
 
 _mpuGetRegionBaseAddress_
 
         mrc   p15, #0, r0, c6, c1, #0
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -399,8 +399,8 @@ _mpuGetRegionBaseAddress_
 ; DesignId : MPU_DesignId_012
 ; Requirements : HL_SR489
 
-    .def     _mpuSetRegionTypeAndPermission_
-    .asmfunc
+    export     _mpuSetRegionTypeAndPermission_
+    
 
 _mpuSetRegionTypeAndPermission_
 
@@ -408,7 +408,7 @@ _mpuSetRegionTypeAndPermission_
         mcr   p15, #0, r0, c6, c1, #4
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -417,8 +417,8 @@ _mpuSetRegionTypeAndPermission_
 ; DesignId : MPU_DesignId_013
 ; Requirements : HL_SR490
 
-    .def     _mpuGetRegionType_
-    .asmfunc
+    export     _mpuGetRegionType_
+    
 
 _mpuGetRegionType_
 
@@ -426,7 +426,7 @@ _mpuGetRegionType_
         bic   r0,  r0, #0xFF00
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -435,8 +435,8 @@ _mpuGetRegionType_
 ; DesignId : MPU_DesignId_014
 ; Requirements : HL_SR490
 
-    .def     _mpuGetRegionPermission_
-    .asmfunc
+    export     _mpuGetRegionPermission_
+    
 
 _mpuGetRegionPermission_
 
@@ -444,7 +444,7 @@ _mpuGetRegionPermission_
         bic   r0,  r0, #0xFF
         bx    lr
 
-    .endasmfunc
+    
 
 
 ;-------------------------------------------------------------------------------
@@ -453,8 +453,8 @@ _mpuGetRegionPermission_
 ; DesignId : MPU_DesignId_015
 ; Requirements : HL_SR489
 
-    .def     _mpuSetRegionSizeRegister_
-    .asmfunc
+    export     _mpuSetRegionSizeRegister_
+    
 
 _mpuSetRegionSizeRegister_
 
@@ -462,9 +462,9 @@ _mpuSetRegionSizeRegister_
         mcr   p15, #0, r0, c6, c1, #2
         bx    lr
 
-    .endasmfunc
-
     
+
+    end
 
 ;-------------------------------------------------------------------------------
 
