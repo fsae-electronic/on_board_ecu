@@ -12,12 +12,12 @@ typedef enum
 typedef enum
 {
     GRAPH_NONE = 0,
-    GRAPH_M1_VDC,
-    GRAPH_M1_IDC,
+    GRAPH_DRV1_VDC,
+    GRAPH_DRV1_IDC,
     GRAPH_M1_IAC,
     GRAPH_M1_T,
-    GRAPH_M2_VDC,
-    GRAPH_M2_IDC,
+    GRAPH_DRV2_VDC,
+    GRAPH_DRV2_IDC,
     GRAPH_M2_IAC,
     GRAPH_M2_T,
     GRAPH_TPS,

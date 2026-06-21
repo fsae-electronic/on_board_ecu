@@ -61,9 +61,9 @@ void update_data(void)
     {
         canGetData(canREG1, canMESSAGE_BOX3, current_data.raw);
         dashboard_data.motor1_ac_current = (float)current_data.values.ac_current_1;
-        dashboard_data.motor1_dc_current = (float)current_data.values.dc_current_1;
+        dashboard_data.driver1_dc_current = (float)current_data.values.dc_current_1;
         dashboard_data.motor2_ac_current = (float)current_data.values.ac_current_2;
-        dashboard_data.motor2_dc_current = (float)current_data.values.dc_current_2;
+        dashboard_data.driver2_dc_current = (float)current_data.values.dc_current_2;
         current_data.new_data = false;
     }
     if(rear_data.new_data)
@@ -89,29 +89,31 @@ void update_data(void)
     if(motor1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX7, motor1_data.raw);
-        dashboard_data.motor1_dc_voltage = (float)motor1_data.values.dc_voltage;
-        dashboard_data.motor1_temp = (float)motor1_data.values.temp;
+        dashboard_data.wheel_speed_rl = (float)motor1_data.values.motor_velocity; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.motor1_rated_current = (float)motor1_data.values.motor_rated_current;
+        dashboard_data.motor1_temp = (float)motor1_data.values.motor_temp;
         motor1_data.new_data = false;
     }
     if(motor2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX8, motor2_data.raw);
-        dashboard_data.motor2_dc_voltage = (float)motor2_data.values.dc_voltage;
-        dashboard_data.motor2_temp = (float)motor2_data.values.temp;
+        dashboard_data.wheel_speed_rr = (float)motor2_data.values.motor_velocity; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.motor2_rated_current = (float)motor2_data.values.motor_rated_current;
+        dashboard_data.motor2_temp = (float)motor2_data.values.motor_temp;
         motor2_data.new_data = false;
     }
     if(driver1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX9, driver1_data.raw);
         dashboard_data.driver1_temp = (float)driver1_data.values.driver_temp;
-        dashboard_data.driver1_voltage = (float)driver1_data.values.driver_voltage;
+        dashboard_data.driver1_dc_voltage = (float)driver1_data.values.driver_dc_voltage;
         driver1_data.new_data = false;
     }
     if(driver2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX10, driver2_data.raw);
         dashboard_data.driver2_temp = (float)driver2_data.values.driver_temp;
-        dashboard_data.driver2_voltage = (float)driver2_data.values.driver_voltage;
+        dashboard_data.driver2_dc_voltage = (float)driver2_data.values.driver_dc_voltage;
         driver2_data.new_data = false;
     }
     if(main_ecu_data.new_data)
@@ -131,8 +133,8 @@ void update_data(void)
 
     // Process data
     dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
-    dashboard_data.battery_voltage = (dashboard_data.motor1_dc_voltage + dashboard_data.motor2_dc_voltage) / 2.0f;
-    dashboard_data.battery_current = (dashboard_data.motor1_dc_current + dashboard_data.motor2_dc_current);
+    dashboard_data.battery_voltage = (dashboard_data.driver1_dc_voltage + dashboard_data.driver2_dc_voltage) / 2.0f;
+    dashboard_data.battery_current = (dashboard_data.driver1_dc_current + dashboard_data.driver2_dc_current);
     
 
 

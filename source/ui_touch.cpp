@@ -213,12 +213,12 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 2: data->mode = !data->mode; break;
                 case 3: data->drive_enabled = !data->drive_enabled; break;
 
-                case 10: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_VDC; break;
-                case 11: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_IDC; break;
+                case 10: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV1_VDC; break;
+                case 11: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV1_IDC; break;
                 case 12: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_IAC; break;
                 case 13: current_page = PAGE_GRAPH; current_graph = GRAPH_M1_T; break;
-                case 14: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_VDC; break;
-                case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IDC; break;
+                case 14: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV2_VDC; break;
+                case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV2_IDC; break;
                 case 16: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IAC; break;
                 case 17: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_T; break;
                 case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
@@ -269,7 +269,13 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     }
                     break;
 
-                case 48: break;
+                case 48:
+                    if(data->cal_center_steer == 0)
+                    {
+                        data->cal_center_steer = 1;
+                        cal_center_steer_timer = 50;
+                    }
+                    break;
 
                 case 49:
                     data->cal_screen = 1;

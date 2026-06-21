@@ -98,15 +98,13 @@ typedef struct
     float tps_2;
 
 
-    float motor1_dc_voltage;
-    float motor1_dc_current;
     float motor1_ac_current;
     float motor1_temp;
+    float motor1_rated_current;
 
-    float motor2_dc_voltage;
-    float motor2_dc_current;
     float motor2_ac_current;
     float motor2_temp;
+    float motor2_rated_current;
 
     float brake_front;
     float brake_rear;
@@ -122,10 +120,12 @@ typedef struct
     float wheel_speed_rr;      // rear right
 
     float driver1_temp;
-    float driver1_voltage;
+    float driver1_dc_voltage;
+    float driver1_dc_current;
 
     float driver2_temp;
-    float driver2_voltage;
+    float driver2_dc_voltage;
+    float driver2_dc_current;
 
     uint8_t driver1_warning;
     uint8_t driver1_error;
@@ -147,6 +147,7 @@ typedef struct
     uint8_t cal_tps_0;
     uint8_t cal_tps_100;
     uint8_t cal_left_steer;
+    uint8_t cal_center_steer;
     uint8_t cal_right_steer;
 
     uint8_t cal_screen;
@@ -157,13 +158,13 @@ typedef struct
     // historical data for graphs (circular buffer)
     
     #define GRAPH_BUFFER_SIZE 256
-    float motor1_dc_voltage_history[GRAPH_BUFFER_SIZE];
-    float motor1_dc_current_history[GRAPH_BUFFER_SIZE];
+    float driver1_dc_voltage_history[GRAPH_BUFFER_SIZE];
+    float driver1_dc_current_history[GRAPH_BUFFER_SIZE];
     float motor1_ac_current_history[GRAPH_BUFFER_SIZE];
     float motor1_temp_history[GRAPH_BUFFER_SIZE];
     
-    float motor2_dc_voltage_history[GRAPH_BUFFER_SIZE];
-    float motor2_dc_current_history[GRAPH_BUFFER_SIZE];
+    float driver2_dc_voltage_history[GRAPH_BUFFER_SIZE];
+    float driver2_dc_current_history[GRAPH_BUFFER_SIZE];
     float motor2_ac_current_history[GRAPH_BUFFER_SIZE];
     float motor2_temp_history[GRAPH_BUFFER_SIZE];
     
@@ -185,6 +186,7 @@ extern dashboard_data_t dashboard_data;
 extern int cal_tps_0_timer;
 extern int cal_tps_100_timer;
 extern int cal_left_steer_timer;
+extern int cal_center_steer_timer;
 extern int cal_right_steer_timer;   
 
 

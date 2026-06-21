@@ -14,6 +14,7 @@ dashboard_data_t dashboard_data;
 int cal_tps_0_timer = 0;
 int cal_tps_100_timer = 0;
 int cal_left_steer_timer = 0;
+int cal_center_steer_timer = 0;
 int cal_right_steer_timer = 0;
 
 
@@ -180,14 +181,12 @@ void init_dashboard(dashboard_data_t *data)
     data->tps_2 = 0;
 
     data->motor1_ac_current = 0;
-    data->motor1_dc_current = 0;
-    data->motor1_dc_voltage = 0;
     data->motor1_temp = 0;
+    data->motor1_rated_current = 0;
 
     data->motor2_ac_current = 0;
-    data->motor2_dc_current = 0;
-    data->motor2_dc_voltage = 0;
     data->motor2_temp = 0;
+    data->motor2_rated_current = 0;
 
     data->brake_front = 0;
     data->brake_rear = 0;
@@ -202,10 +201,12 @@ void init_dashboard(dashboard_data_t *data)
     data->wheel_speed_rr = 0;
 
     data->driver1_temp = 0;
-    data->driver1_voltage = 0;
+    data->driver1_dc_voltage = 0;
+    data->driver1_dc_current = 0;
 
     data->driver2_temp = 0;
-    data->driver2_voltage = 0;
+    data->driver2_dc_voltage = 0;
+    data->driver2_dc_current = 0;
 
     data->driver1_warning = 0;
     data->driver1_error = 0;
@@ -215,7 +216,7 @@ void init_dashboard(dashboard_data_t *data)
 
     
     // Buttons and mode
-    data->canopen_state = BOOTUP;
+    data->canopen_state = 0;
     data->drive_enabled = 0;
     data->traction_on = 0;
     data->telemetry_enabled = 0;
@@ -224,6 +225,7 @@ void init_dashboard(dashboard_data_t *data)
     data->cal_tps_0 = 0;
     data->cal_tps_100 = 0;
     data->cal_left_steer = 0;
+    data->cal_center_steer = 0;
     data->cal_right_steer = 0;
 
     data->cal_screen = 0;
@@ -232,13 +234,13 @@ void init_dashboard(dashboard_data_t *data)
 
     // Initialize graph buffers to zero
     for(int i=0; i<GRAPH_BUFFER_SIZE; i++) {
-        data->motor1_dc_voltage_history[i] = 0;
-        data->motor1_dc_current_history[i] = 0;
+        data->driver1_dc_voltage_history[i] = 0;
+        data->driver1_dc_current_history[i] = 0;
         data->motor1_ac_current_history[i] = 0;
         data->motor1_temp_history[i] = 0;
         
-        data->motor2_dc_voltage_history[i] = 0;
-        data->motor2_dc_current_history[i] = 0;
+        data->driver2_dc_voltage_history[i] = 0;
+        data->driver2_dc_current_history[i] = 0;
         data->motor2_ac_current_history[i] = 0;
         data->motor2_temp_history[i] = 0;
         
@@ -257,13 +259,13 @@ void init_dashboard(dashboard_data_t *data)
 void update_dashboard_data(dashboard_data_t *data)
 {
     // This function can be called after updating the main data fields to push the latest values into the graph buffers
-    data->motor1_dc_voltage_history[data->graph_buffer_index] = data->motor1_dc_voltage;
-    data->motor1_dc_current_history[data->graph_buffer_index] = data->motor1_dc_current;
+    data->driver1_dc_voltage_history[data->graph_buffer_index] = data->driver1_dc_voltage;
+    data->driver1_dc_current_history[data->graph_buffer_index] = data->driver1_dc_current;
     data->motor1_ac_current_history[data->graph_buffer_index] = data->motor1_ac_current;
     data->motor1_temp_history[data->graph_buffer_index] = data->motor1_temp;
     
-    data->motor2_dc_voltage_history[data->graph_buffer_index] = data->motor2_dc_voltage;
-    data->motor2_dc_current_history[data->graph_buffer_index] = data->motor2_dc_current;
+    data->driver2_dc_voltage_history[data->graph_buffer_index] = data->driver2_dc_voltage;
+    data->driver2_dc_current_history[data->graph_buffer_index] = data->driver2_dc_current;
     data->motor2_ac_current_history[data->graph_buffer_index] = data->motor2_ac_current;
     data->motor2_temp_history[data->graph_buffer_index] = data->motor2_temp;
     
@@ -298,8 +300,8 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             eve,
             20,
             "MOTOR 1",
-            d->motor1_dc_voltage,
-            d->motor1_dc_current,
+            d->driver1_dc_voltage,
+            d->driver1_dc_current,
             d->motor1_ac_current,
             d->motor1_temp
         );
@@ -308,8 +310,8 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             eve,
             360,
             "MOTOR 2",
-            d->motor2_dc_voltage,
-            d->motor2_dc_current,
+            d->driver2_dc_voltage,
+            d->driver2_dc_current,
             d->motor2_ac_current,
             d->motor2_temp
         );
@@ -350,14 +352,14 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             if (unit[0]) eve.CMD_TEXT(x+cellW-20, y+18, 22, 0, unit);
             eve.TAG(255);
         };
-        // columna 0: motor1 + battery volt
-        textInCell(0,0,"M1 VDC", d->motor1_dc_voltage, "V", 10);
-        textInCell(0,1,"M1 IDC", d->motor1_dc_current, "A", 11);
+        // columna 0: driver1 + battery volt
+        textInCell(0,0,"DRV1 VDC", d->driver1_dc_voltage, "V", 10);
+        textInCell(0,1,"DRV1 IDC", d->driver1_dc_current, "A", 11);
         textInCell(0,2,"M1 IAC", d->motor1_ac_current, "A", 12);
         textInCell(0,3,"M1 T", d->motor1_temp, "C", 13);
-        // columna 1: motor2 + battery current
-        textInCell(1,0,"M2 VDC", d->motor2_dc_voltage, "V", 14);
-        textInCell(1,1,"M2 IDC", d->motor2_dc_current, "A", 15);
+        // columna 1: driver2 + battery current
+        textInCell(1,0,"DRV2 VDC", d->driver2_dc_voltage, "V", 14);
+        textInCell(1,1,"DRV2 IDC", d->driver2_dc_current, "A", 15);
         textInCell(1,2,"M2 IAC", d->motor2_ac_current, "A", 16);
         textInCell(1,3,"M2 T", d->motor2_temp, "C", 17);
         // columna 2: controles
@@ -378,13 +380,13 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         const char* graphTitle = "GRAPH";
         switch(current_graph)
         {
-            case GRAPH_M1_VDC: graphTitle = "Motor 1 Voltage"; break;
-            case GRAPH_M1_IDC: graphTitle = "Motor 1 Current"; break;
+            case GRAPH_DRV1_VDC: graphTitle = "Driver 1 Voltage"; break;
+            case GRAPH_DRV1_IDC: graphTitle = "Driver 1 Current"; break;
             case GRAPH_M1_IAC: graphTitle = "Motor 1 AC Current"; break;
             case GRAPH_M1_T: graphTitle = "Motor 1 Temp"; break;
 
-            case GRAPH_M2_VDC: graphTitle = "Motor 2 Voltage"; break;
-            case GRAPH_M2_IDC: graphTitle = "Motor 2 Current"; break;
+            case GRAPH_DRV2_VDC: graphTitle = "Driver 2 Voltage"; break;
+            case GRAPH_DRV2_IDC: graphTitle = "Driver 2 Current"; break;
             case GRAPH_M2_IAC: graphTitle = "Motor 2 AC Current"; break;
             case GRAPH_M2_T: graphTitle = "Motor 2 Temp"; break;
 
@@ -441,13 +443,13 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
 
         switch(current_graph)
         {
-            case GRAPH_M1_VDC: max_val = 200; history = d->motor1_dc_voltage_history; break;
-            case GRAPH_M1_IDC: max_val = 200; history = d->motor1_dc_current_history; break;
+            case GRAPH_DRV1_VDC: max_val = 200; history = d->driver1_dc_voltage_history; break;
+            case GRAPH_DRV1_IDC: max_val = 200; history = d->driver1_dc_current_history; break;
             case GRAPH_M1_IAC: max_val = 200; history = d->motor1_ac_current_history; break;
             case GRAPH_M1_T: max_val = 80; history = d->motor1_temp_history; break;
 
-            case GRAPH_M2_VDC: max_val = 200; history = d->motor2_dc_voltage_history; break;
-            case GRAPH_M2_IDC: max_val = 200; history = d->motor2_dc_current_history; break;
+            case GRAPH_DRV2_VDC: max_val = 200; history = d->driver2_dc_voltage_history; break;
+            case GRAPH_DRV2_IDC: max_val = 200; history = d->driver2_dc_current_history; break;
             case GRAPH_M2_IAC: max_val = 200; history = d->motor2_ac_current_history; break;
             case GRAPH_M2_T: max_val = 80; history = d->motor2_temp_history; break;
 
@@ -495,13 +497,13 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         float current_val = 0;
         switch(current_graph)
         {
-            case GRAPH_M1_VDC: current_val = d->motor1_dc_voltage; break;
-            case GRAPH_M1_IDC: current_val = d->motor1_dc_current; break;
+            case GRAPH_DRV1_VDC: current_val = d->driver1_dc_voltage; break;
+            case GRAPH_DRV1_IDC: current_val = d->driver1_dc_current; break;
             case GRAPH_M1_IAC: current_val = d->motor1_ac_current; break;
             case GRAPH_M1_T: current_val = d->motor1_temp; break;
 
-            case GRAPH_M2_VDC: current_val = d->motor2_dc_voltage; break;
-            case GRAPH_M2_IDC: current_val = d->motor2_dc_current; break;
+            case GRAPH_DRV2_VDC: current_val = d->driver2_dc_voltage; break;
+            case GRAPH_DRV2_IDC: current_val = d->driver2_dc_current; break;
             case GRAPH_M2_IAC: current_val = d->motor2_ac_current; break;
             case GRAPH_M2_T: current_val = d->motor2_temp; break;
 
@@ -681,6 +683,26 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             eve.CMD_BUTTON(170, 160, 120, 40, 26, 0, "Cal RIGHT");
         }
         
+
+        eve.TAG(48);
+        if(d->cal_center_steer)
+        {
+            eve.COLOR_RGB(0,0,255);
+            eve.CMD_BUTTON(320, 160, 120, 40, 26, EVE_OPT_FLAT, "Send");
+            if(cal_center_steer_timer > 0)
+            {
+                cal_center_steer_timer--;
+            }
+            else
+            {
+                d->cal_center_steer = 0;
+            }
+        }
+        else
+        {
+            eve.COLOR_RGB(255,255,255);
+            eve.CMD_BUTTON(320, 160, 120, 40, 26, 0, "Cal CENTER");
+        }
 
 
 

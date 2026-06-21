@@ -36,9 +36,9 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `0x504` | `rear_data_t` | `b0-b1 = rear_brake_pressure`, `b2-b7 = libre` |
 | `0x181` | `driver_status_t` | `b0-b1 = status_word`, `b2-b3 = warning`, `b4-b5 = error`, `b6-b7 = libre` |
 | `0x182` | `driver_status_t` | igual que `0x181` |
-| `0x281` | `motor_data_t` | `b0-b1 = dc_voltage`, `b2-b3 = rated_current`, `b4 = temp`, `b5-b7 = libre` |
+| `0x281` | `motor_data_t` | `b0-b1 = motor_velocity`, `b2-b3 = motor_rated_current`, `b4 = motor_temp`, `b5-b7 = libre` |
 | `0x282` | `motor_data_t` | igual que `0x281` |
-| `0x381` | `driver_data_t` | `b0 = driver_temp`,  `b1-b2 = driver_voltage`, `b3-b7 = libre` |
+| `0x381` | `driver_data_t` | `b0 = driver_temp`,  `b1-b2 = driver_dc_voltage`, `b3-b7 = libre` |
 | `0x382` | `driver_data_t` | igual que `0x381` |
 | `0x700` | `canopen_heartbeat_t` | `b0 = canopen_state`, `b1-b7 = libre` |
 | `0x401` | `main_ecu_data_t` | `b0 = tps`, `b1 = mode`, `b2 = error_code`, `b3-b7 = libre` |
@@ -65,7 +65,7 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 - `front_data_t` y `rear_data_t`: velocidades/direccion y presiones de freno.
 - `current_data_t`: corrientes AC/DC de ambos motores.
 - `driver_status_t`: estado, warning y error del driver.
-- `motor_data_t`: tension, corriente y temperatura del motor.
+- `motor_data_t`: velocidad de motor, corriente nominal y temperatura.
 - `driver_data_t`: temperatura y tension del driver.
 - `main_ecu_data_t` y `buttons_data_t`: estado interno del sistema y botones que publica el on-board ECU.
 
