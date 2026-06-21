@@ -233,7 +233,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 30: current_page = PAGE_TELEMETRY; current_graph = GRAPH_NONE; break;
 
                 case 40:
-                    if(data->cal_tps_0 == 0)
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_tps_0 == 0))
                     {
                         data->cal_tps_0 = 1;
                         cal_tps_0_timer = 50;
@@ -241,7 +241,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 41:
-                    if(data->cal_tps_100 == 0)
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_tps_100 == 0))
                     {
                         data->cal_tps_100 = 1;
                         cal_tps_100_timer = 50;
@@ -254,7 +254,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 45: data->telemetry_enabled = !data->telemetry_enabled; break;
 
                 case 46:
-                    if(data->cal_left_steer == 0)
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_left_steer == 0))
                     {
                         data->cal_left_steer = 1;
                         cal_left_steer_timer = 50;
@@ -262,7 +262,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 47:
-                    if(data->cal_right_steer == 0)
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_right_steer == 0))
                     {
                         data->cal_right_steer = 1;
                         cal_right_steer_timer = 50;
@@ -270,7 +270,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 48:
-                    if(data->cal_center_steer == 0)
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_center_steer == 0))
                     {
                         data->cal_center_steer = 1;
                         cal_center_steer_timer = 50;
@@ -284,7 +284,13 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     data->cal_screen = 0;
                     break;
 
-                case 50: break;
+                case 50:
+                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_current_sensors == 0))
+                    {
+                        data->cal_current_sensors = 1;
+                        cal_current_sensors_timer = 50;
+                    }
+                    break;
                 case 51: break;
             }
 

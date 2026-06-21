@@ -149,6 +149,7 @@ typedef struct
     uint8_t cal_left_steer;
     uint8_t cal_center_steer;
     uint8_t cal_right_steer;
+    uint8_t cal_current_sensors;
 
     uint8_t cal_screen;
 
@@ -188,6 +189,7 @@ extern int cal_tps_100_timer;
 extern int cal_left_steer_timer;
 extern int cal_center_steer_timer;
 extern int cal_right_steer_timer;   
+extern int cal_current_sensors_timer;
 
 
 void init_dashboard(dashboard_data_t *data);

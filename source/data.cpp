@@ -25,6 +25,7 @@ main_ecu_data_t main_ecu_data;
 
 buttons_data_t buttons_data;
 canopen_heartbeat_t canopen_heartbeat;
+calibration_cmd_t calibration_cmd;
 
 
 
@@ -38,6 +39,19 @@ void init_data(void)
 
 void update_data(void)
 {
+    static uint8_t last_cal_tps_0 = 0;
+    static uint8_t last_cal_tps_100 = 0;
+    static uint8_t last_cal_left_steer = 0;
+    static uint8_t last_cal_center_steer = 0;
+    static uint8_t last_cal_right_steer = 0;
+    static uint8_t last_cal_current_sensors = 0;
+
+    auto send_calibration_cmd = [](uint8_t cmd_id)
+    {
+        calibration_cmd.values.cmd_id = cmd_id;
+        canTransmit(canREG1, canMESSAGE_BOX18, calibration_cmd.raw);
+    };
+
     // This function can be used to perform any periodic updates or checks for the drivers if needed
     // Send data of buttons status to dashboard
     if(tps_data.new_data) 
@@ -130,7 +144,6 @@ void update_data(void)
         dashboard_data.canopen_state = canopen_heartbeat.values.canopen_state;
         canopen_heartbeat.new_data = false;
     }
-
     // Process data
     dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
     dashboard_data.battery_voltage = (dashboard_data.driver1_dc_voltage + dashboard_data.driver2_dc_voltage) / 2.0f;
@@ -138,12 +151,41 @@ void update_data(void)
     
 
 
-    // Send buttons status to dashboard
-    buttons_data.values.drive_enabled = dashboard_data.drive_enabled;
-    buttons_data.values.traction_on = dashboard_data.traction_on;
-    buttons_data.values.telemetry_enabled = dashboard_data.telemetry_enabled;
-    buttons_data.values.mode = dashboard_data.mode;
-    canTransmit(canREG1, canMESSAGE_BOX13, buttons_data.raw);
+    // Send calibration commands only on rising edge and only in PRE_OPERATIONAL.
+    if(dashboard_data.canopen_state == PRE_OPERATIONAL)
+    {
+        if(dashboard_data.cal_tps_0 && !last_cal_tps_0)
+        {
+            send_calibration_cmd(CAL_CMD_TPS_0);
+        }
+        if(dashboard_data.cal_tps_100 && !last_cal_tps_100)
+        {
+            send_calibration_cmd(CAL_CMD_TPS_100);
+        }
+        if(dashboard_data.cal_left_steer && !last_cal_left_steer)
+        {
+            send_calibration_cmd(CAL_CMD_LEFT_STEER);
+        }
+        if(dashboard_data.cal_center_steer && !last_cal_center_steer)
+        {
+            send_calibration_cmd(CAL_CMD_CENTER_STEER);
+        }
+        if(dashboard_data.cal_right_steer && !last_cal_right_steer)
+        {
+            send_calibration_cmd(CAL_CMD_RIGHT_STEER);
+        }
+        if(dashboard_data.cal_current_sensors && !last_cal_current_sensors)
+        {
+            send_calibration_cmd(CAL_CMD_CURRENT_SENSORS);
+        }
+    }
+
+    last_cal_tps_0 = dashboard_data.cal_tps_0;
+    last_cal_tps_100 = dashboard_data.cal_tps_100;
+    last_cal_left_steer = dashboard_data.cal_left_steer;
+    last_cal_center_steer = dashboard_data.cal_center_steer;
+    last_cal_right_steer = dashboard_data.cal_right_steer;
+    last_cal_current_sensors = dashboard_data.cal_current_sensors;
 
 
 }

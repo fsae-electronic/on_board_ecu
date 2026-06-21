@@ -16,6 +16,7 @@ int cal_tps_100_timer = 0;
 int cal_left_steer_timer = 0;
 int cal_center_steer_timer = 0;
 int cal_right_steer_timer = 0;
+int cal_current_sensors_timer = 0;
 
 
 
@@ -227,6 +228,7 @@ void init_dashboard(dashboard_data_t *data)
     data->cal_left_steer = 0;
     data->cal_center_steer = 0;
     data->cal_right_steer = 0;
+    data->cal_current_sensors = 0;
 
     data->cal_screen = 0;
 
@@ -719,8 +721,26 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             eve.CMD_BUTTON(20, 220, 120, 40, 26, 0, "Cal Screen");
         }
 
-        // eve.TAG(50);
-        // eve.CMD_BUTTON(170, 220, 120, 40, 26, 0, "");
+        eve.TAG(50);
+        if(d->cal_current_sensors)
+        {
+            eve.COLOR_RGB(0,0,255);
+            eve.CMD_BUTTON(170, 220, 120, 40, 26, EVE_OPT_FLAT, "Send");
+            if(cal_current_sensors_timer > 0)
+            {
+                cal_current_sensors_timer--;
+            }
+            else
+            {
+                d->cal_current_sensors = 0;
+            }
+        }
+        else
+        {
+            eve.COLOR_RGB(255,255,255);
+            eve.CMD_BUTTON(170, 220, 120, 40, 26, 0, "Cal Current");
+        }
+
         // eve.TAG(51);
         // eve.CMD_BUTTON(320, 220, 120, 40, 26, 0, "");
 

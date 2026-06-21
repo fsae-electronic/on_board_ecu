@@ -221,7 +221,7 @@ void canInit(void)
     canREG1->IF2CMD  = (uint8) 0xF8U;
     canREG1->IF2NO   = 2U;
 
-    /** - Initialize message 3 
+        canREG1->IF1ARB  = (uint32)0x80000000U | (uint32)0x40000000U | (uint32)0x20000000U | (uint32)((uint32)((uint32)0x402U & (uint32)0x1FFFFFFFU) << (uint32)0U);
     *     - Wait until IF1 is ready for use 
     *     - Set message mask
     *     - Set message control word

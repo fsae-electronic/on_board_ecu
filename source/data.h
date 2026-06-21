@@ -29,7 +29,19 @@
 #define MAIN_ECU_ID 0x401   
 
 #define ON_BOARD_ECU_ID 0x402
+#define CALIBRATION_CMD_ID 0x600
 #define CANOPEN_HEARTBEAT_ID 0x700
+
+enum calibration_cmd_id_t
+{
+    CAL_CMD_NONE = 0,
+    CAL_CMD_TPS_0 = 1,
+    CAL_CMD_TPS_100 = 2,
+    CAL_CMD_LEFT_STEER = 3,
+    CAL_CMD_CENTER_STEER = 4,
+    CAL_CMD_RIGHT_STEER = 5,
+    CAL_CMD_CURRENT_SENSORS = 6
+};
 
 
 struct tps_data_t
@@ -206,6 +218,20 @@ struct canopen_heartbeat_t
     uint16_t can_id = CANOPEN_HEARTBEAT_ID;
 };
 
+struct calibration_cmd_t
+{
+    union
+    {
+        uint8_t raw[8];
+        struct
+        {
+            uint8_t cmd_id;
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id = CALIBRATION_CMD_ID;
+};
+
 
 extern tps_data_t tps_data;
 extern front_data_t front_data;
@@ -226,6 +252,7 @@ extern main_ecu_data_t main_ecu_data;
 
 extern buttons_data_t buttons_data;
 extern canopen_heartbeat_t canopen_heartbeat;
+extern calibration_cmd_t calibration_cmd;
 
 
 

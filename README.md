@@ -25,6 +25,7 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | 11 | RX | `0x401` | `main_ecu_data_t` |
 | 12 | RX | `0x700` | `canopen_heartbeat_t` |
 | 17 | TX | `0x402` | `buttons_data_t` |
+| 18 | TX | `0x600` | `calibration_cmd_t` |
 
 ### Frames recibidos
 
@@ -49,6 +50,21 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | CAN ID | Estructura | Bytes |
 | --- | --- | --- |
 | `0x402` | `buttons_data_t` | `b0 = drive_enabled`, `b1 = traction_on`, `b2 = mode`, `b3 = telemetry_enabled`, `b4-b7 = libre` |
+| `0x600` | `calibration_cmd_t` | `b0 = cmd_id`, `b1-b7 = libre` |
+
+### Frame de calibracion (ID `0x600`)
+
+Condicion de seguridad:
+solo se envian comandos de calibracion cuando CANopen esta en `Pre-operational` (`0x7F`).
+
+| `cmd_id` | Accion |
+| ---: | --- |
+| `1` | `cal_tps_0` |
+| `2` | `cal_tps_100` |
+| `3` | `cal_left_steer` |
+| `4` | `cal_center_steer` |
+| `5` | `cal_right_steer` |
+| `6` | `cal_current_sensors` |
 
 ### CANopen heartbeat (ID `0x700`)
 
@@ -67,7 +83,9 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 - `driver_status_t`: estado, warning y error del driver.
 - `motor_data_t`: velocidad de motor, corriente nominal y temperatura.
 - `driver_data_t`: temperatura y tension del driver.
-- `main_ecu_data_t` y `buttons_data_t`: estado interno del sistema y botones que publica el on-board ECU.
+- `main_ecu_data_t`: estado interno del sistema.
+- `buttons_data_t`: botones que publica el on-board ECU en `0x402`.
+- `calibration_cmd_t`: comando de calibracion por `cmd_id` (TX en `0x600`).
 
 ## Warnings y errores
 
