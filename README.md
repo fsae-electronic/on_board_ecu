@@ -38,7 +38,7 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `0x182` | `driver_status_t` | igual que `0x181` |
 | `0x281` | `motor_data_t` | `b0-b1 = dc_voltage`, `b2-b3 = rated_current`, `b4 = temp`, `b5-b7 = libre` |
 | `0x282` | `motor_data_t` | igual que `0x281` |
-| `0x381` | `driver_data_t` | `b0 = driver_temp`, `b1 = padding`, `b2-b3 = driver_voltage`, `b4-b7 = libre` |
+| `0x381` | `driver_data_t` | `b0 = driver_temp`,  `b1-b2 = driver_voltage`, `b3-b7 = libre` |
 | `0x382` | `driver_data_t` | igual que `0x381` |
 | `0x700` | `canopen_heartbeat_t` | `b0 = canopen_state`, `b1-b7 = libre` |
 | `0x401` | `main_ecu_data_t` | `b0 = tps`, `b1 = mode`, `b2 = error_code`, `b3-b7 = libre` |
