@@ -3,7 +3,6 @@
 
 #include "Bridgetek_EVE2.hpp"
 #include "dashboard.h"
-#include "ti_fee.h"
 
 
 int eve_calibrate(Bridgetek_EVE2 &eve);

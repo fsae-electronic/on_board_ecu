@@ -28,28 +28,6 @@ source/dashboard.obj: ../source/ui_rpm_bar.h
 source/dashboard.obj: ../source/ui_buttons.h
 source/dashboard.obj: ../source/pages.h
 source/dashboard.obj: ../source/ui_touch.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
-source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdbool.h
-source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/fee_interface.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee_cfg.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee_types.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_header.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_TMS570LS12.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/F021.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Types.h
-source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stddef.h
-source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h
-source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__nullptr
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/CGT.CCS.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Helpers.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Constants.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Registers.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Registers_FMC_BE.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/FapiFunctions.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Compatibility.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_types.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdio.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdio.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/math.h
@@ -58,6 +36,8 @@ source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/inc
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_limits.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/type_traits
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/cstddef
+source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h
+source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__nullptr
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/limits
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/support/ti/__limit_defs.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/float.h
@@ -121,50 +101,6 @@ C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h:
 
 ../source/ui_touch.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
-
-C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdbool.h:
-
-C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/fee_interface.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee_cfg.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee_types.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_header.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_TMS570LS12.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/F021.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Types.h:
-
-C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stddef.h:
-
-C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h:
-
-C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__nullptr:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/CGT.CCS.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Helpers.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Constants.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Registers.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Registers_FMC_BE.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/FapiFunctions.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Compatibility.h:
-
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_types.h:
-
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdio.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdio.h:
@@ -180,6 +116,10 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_limits.h
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/type_traits:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/cstddef:
+
+C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h:
+
+C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__nullptr:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/limits:
 

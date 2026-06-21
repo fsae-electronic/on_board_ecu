@@ -25,6 +25,7 @@ source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driv
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/HAL.h
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h
 source/ui_touch.obj: ../source/dashboard.h
+source/ui_touch.obj: ../source/pages.h
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee.h
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
 source/ui_touch.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdbool.h
@@ -47,7 +48,6 @@ source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Re
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/FapiFunctions.h
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Compatibility.h
 source/ui_touch.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_types.h
-source/ui_touch.obj: ../source/pages.h
 
 ../source/ui_touch.cpp:
 
@@ -99,6 +99,8 @@ C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h:
 
 ../source/dashboard.h:
 
+../source/pages.h:
+
 C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/ti_fee.h:
 
 C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
@@ -142,6 +144,4 @@ C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/FapiFunctions.h:
 C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Compatibility.h:
 
 C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/Device_types.h:
-
-../source/pages.h:
 
