@@ -29,9 +29,10 @@
 #define MAIN_ECU_ID 0x401   
 
 #define ON_BOARD_ECU_ID 0x402
+#define CANOPEN_HEARTBEAT_ID 0x700
 
 
-typedef struct
+struct tps_data_t
 {
     union
     {
@@ -45,10 +46,10 @@ typedef struct
     };
     volatile bool new_data;
     uint16_t can_id = TPS_ID;
-} tps_data_t;
+};
 
 
-typedef struct
+struct front_data_t
 {
     union
     {
@@ -64,9 +65,9 @@ typedef struct
     };
     volatile bool new_data;
     uint16_t can_id = FRONT_DATA_ID;
-} front_data_t;
+};
 
-typedef struct
+struct current_data_t
 {
     union
     {
@@ -82,9 +83,9 @@ typedef struct
     };
     volatile bool new_data;
     uint16_t can_id = CURRENT_DATA_ID;
-} current_data_t;
+};
 
-typedef struct
+struct rear_data_t
 {
     union
     {
@@ -97,7 +98,7 @@ typedef struct
     };
     volatile bool new_data;
     uint16_t can_id = REAR_DATA_ID;
-} rear_data_t;
+};
 
 struct driver_status_t
 {
@@ -156,7 +157,7 @@ struct driver_data_t
 };
 
 
-typedef struct
+struct main_ecu_data_t
 {
     union
     {
@@ -171,10 +172,10 @@ typedef struct
     };
     volatile bool new_data;
     uint16_t can_id = MAIN_ECU_ID; 
-} main_ecu_data_t;
+};
 
 
-typedef struct
+struct buttons_data_t
 {
     union
     {
@@ -189,7 +190,21 @@ typedef struct
         } values;
     };
     volatile bool new_data;
-} buttons_data_t;
+};
+
+struct canopen_heartbeat_t
+{
+    union
+    {
+        uint8_t raw[8];
+        struct
+        {
+            uint8_t canopen_state;
+        } values;
+    };
+    volatile bool new_data;
+    uint16_t can_id = CANOPEN_HEARTBEAT_ID;
+};
 
 
 extern tps_data_t tps_data;
@@ -210,6 +225,7 @@ extern driver_data_t driver2_data;
 extern main_ecu_data_t main_ecu_data;
 
 extern buttons_data_t buttons_data;
+extern canopen_heartbeat_t canopen_heartbeat;
 
 
 

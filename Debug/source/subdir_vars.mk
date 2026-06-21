@@ -39,6 +39,7 @@ C_SRCS += \
 ../source/sci.c \
 ../source/spi.c \
 ../source/sys_dma.c \
+../source/sys_main.c \
 ../source/sys_pcr.c \
 ../source/sys_phantom.c \
 ../source/sys_pmm.c \
@@ -75,6 +76,7 @@ C_DEPS += \
 ./source/sci.d \
 ./source/spi.d \
 ./source/sys_dma.d \
+./source/sys_main.d \
 ./source/sys_pcr.d \
 ./source/sys_phantom.d \
 ./source/sys_pmm.d \
@@ -226,6 +228,7 @@ C_DEPS__QUOTED += \
 "source\sci.d" \
 "source\spi.d" \
 "source\sys_dma.d" \
+"source\sys_main.d" \
 "source\sys_pcr.d" \
 "source\sys_phantom.d" \
 "source\sys_pmm.d" \
@@ -279,6 +282,7 @@ C_SRCS__QUOTED += \
 "../source/sci.c" \
 "../source/spi.c" \
 "../source/sys_dma.c" \
+"../source/sys_main.c" \
 "../source/sys_pcr.c" \
 "../source/sys_phantom.c" \
 "../source/sys_pmm.c" \

@@ -23,7 +23,8 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | 9 | RX | `0x381` | `driver_data_t` |
 | 10 | RX | `0x382` | `driver_data_t` |
 | 11 | RX | `0x401` | `main_ecu_data_t` |
-| 12 | TX | `0x402` | `buttons_data_t` |
+| 12 | RX | `0x700` | `canopen_heartbeat_t` |
+| 17 | TX | `0x402` | `buttons_data_t` |
 
 ### Frames recibidos
 
@@ -39,13 +40,24 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `0x282` | `motor_data_t` | igual que `0x281` |
 | `0x381` | `driver_data_t` | `b0 = driver_temp`, `b1 = padding`, `b2-b3 = driver_voltage`, `b4-b7 = libre` |
 | `0x382` | `driver_data_t` | igual que `0x381` |
+| `0x700` | `canopen_heartbeat_t` | `b0 = canopen_state`, `b1-b7 = libre` |
 | `0x401` | `main_ecu_data_t` | `b0 = tps`, `b1 = mode`, `b2 = error_code`, `b3-b7 = libre` |
+
 
 ### Frame transmitido
 
 | CAN ID | Estructura | Bytes |
 | --- | --- | --- |
 | `0x402` | `buttons_data_t` | `b0 = drive_enabled`, `b1 = traction_on`, `b2 = mode`, `b3 = telemetry_enabled`, `b4-b7 = libre` |
+
+### CANopen heartbeat (ID `0x700`)
+
+| Byte 0 | Estado |
+| ---: | --- |
+| `0x00` | Bootup |
+| `0x05` | Operational |
+| `0x7F` | Pre-operational |
+| `0x04` | Stopped |
 
 ## Resumen corto
 

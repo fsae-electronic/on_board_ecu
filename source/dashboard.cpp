@@ -125,13 +125,14 @@ void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         }
     };
 
-    auto drive_to_str = [](uint8_t drive_state) -> const char *
+    auto canopen_to_str = [](uint8_t canopen_state) -> const char *
     {
-        switch(drive_state)
+        switch(canopen_state)
         {
-            case OFF: return "OFF";
-            case ON: return "ON";
-            case DRIVE_FAULT: return "FAULT";
+            case BOOTUP: return "Bootup";
+            case PRE_OPERATIONAL: return "Pre-operational";
+            case OPERATIONAL: return "Operational";
+            case STOPPED: return "Stopped";
             default: return "STATE_UNKNOWN";
         }
     };
@@ -153,7 +154,7 @@ void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
     eve.CMD_TEXT(x, y + 54, 20, 0, line);
 
     eve.COLOR_RGB(255,255,0);
-    sprintf(line, "DRV:%u %s", d->drive_state, drive_to_str(d->drive_state));
+    sprintf(line, "CANopen:%u %s", d->canopen_state, canopen_to_str(d->canopen_state));
     eve.CMD_TEXT(x, y + 72, 20, 0, line);
 
     eve.COLOR_RGB(255,255,255);
@@ -214,7 +215,7 @@ void init_dashboard(dashboard_data_t *data)
 
     
     // Buttons and mode
-    data->drive_state = 0;
+    data->canopen_state = BOOTUP;
     data->drive_enabled = 0;
     data->traction_on = 0;
     data->telemetry_enabled = 0;

@@ -124,10 +124,6 @@
 #ifndef TI_FEE_H
 #define TI_FEE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**********************************************************************************************************************
  * INCLUDES
  *********************************************************************************************************************/
@@ -499,10 +495,6 @@ uint32 TI_FeeInternal_Fletcher16( uint8 const *pu8data, uint16 u16Length);
 #endif
 #if (TI_FEE_GENERATE_DEVICEANDVIRTUALSECTORSTRUC == STD_ON)
 void TI_FeeInternal_PopulateStructures(TI_Fee_DeviceType DeviceType);
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 #endif /* TI_FEE_H */
 /**********************************************************************************************************************

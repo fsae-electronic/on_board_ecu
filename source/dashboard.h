@@ -73,11 +73,12 @@ enum main_ecu_error_code_t
 };
 
 
-enum drive_state_t
+enum canopen_state_t
 {
-    OFF = 0,
-    ON,
-    DRIVE_FAULT
+    BOOTUP = 0x00,
+    PRE_OPERATIONAL = 0x7F,
+    OPERATIONAL = 0x05,
+    STOPPED = 0x04,
 };
 
 enum mode_t
@@ -136,7 +137,7 @@ typedef struct
     uint8_t main_ecu_error_code; // Internal error code
     
     //Buttons and modes
-    uint8_t drive_state;
+    uint8_t canopen_state;
     
     uint8_t drive_enabled;
     uint8_t traction_on;

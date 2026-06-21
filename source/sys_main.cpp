@@ -156,6 +156,9 @@ void canMessageNotification(canBASE_t *node, uint32 messageBox)
             case canMESSAGE_BOX11:
                 main_ecu_data.new_data = true;
                 break;
+            case canMESSAGE_BOX12:
+                canopen_heartbeat.new_data = true;
+                break;
             default:
                 // Handle other message boxes if needed
                 break;

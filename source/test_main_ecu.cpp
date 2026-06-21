@@ -24,7 +24,7 @@ static float motor_temp = 40;
 
 static uint8_t motor1_fault = 0;
 static uint8_t motor2_fault = 0;
-static uint8_t drive_state = 0;
+static uint8_t canopen_state = 0;
 
 static uint32_t sim_counter = 0;
 
@@ -100,7 +100,7 @@ void test_main_ecu_periodic(void)
     {
         motor1_fault = (motor1_fault + 1) % 6;
         motor2_fault = (motor2_fault + 1) % 6;
-        drive_state = (drive_state + 1) % 3;
+        canopen_state = (canopen_state + 1) % 3;
     }
 
 
@@ -143,7 +143,7 @@ void test_main_ecu_periodic(void)
 
     status_msg[0] = motor1_fault;
     status_msg[1] = motor2_fault;
-    status_msg[2] = drive_state;
+    status_msg[2] = canopen_state;
     status_msg[3] = 0;
     status_msg[4] = 0;
     status_msg[5] = 0;

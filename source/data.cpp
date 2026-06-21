@@ -24,6 +24,7 @@ driver_data_t driver2_data(DRIVER2_DATA_ID);
 main_ecu_data_t main_ecu_data;
 
 buttons_data_t buttons_data;
+canopen_heartbeat_t canopen_heartbeat;
 
 
 
@@ -121,6 +122,12 @@ void update_data(void)
         main_ecu_data.values.error_code = dashboard_data.main_ecu_error_code; // No error for now, can
         main_ecu_data.new_data = false;
     }
+    if(canopen_heartbeat.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX12, canopen_heartbeat.raw);
+        dashboard_data.canopen_state = canopen_heartbeat.values.canopen_state;
+        canopen_heartbeat.new_data = false;
+    }
 
     // Process data
     dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
@@ -134,7 +141,7 @@ void update_data(void)
     buttons_data.values.traction_on = dashboard_data.traction_on;
     buttons_data.values.telemetry_enabled = dashboard_data.telemetry_enabled;
     buttons_data.values.mode = dashboard_data.mode;
-    canTransmit(canREG1, canMESSAGE_BOX12, buttons_data.raw);
+    canTransmit(canREG1, canMESSAGE_BOX13, buttons_data.raw);
 
 
 }
