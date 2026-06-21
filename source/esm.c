@@ -50,6 +50,7 @@
 /* Include Files */
 
 #include "esm.h"
+#include "sys_vim.h"
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
@@ -758,7 +759,8 @@ void esmGetConfigValue(esm_config_reg_t *config_reg, config_value_type_t type)
 /** @fn void esmHighInterrupt(void)
 *   @brief High Level Interrupt for ESM
 */
-FIQ
+#pragma CODE_STATE(esmHighInterrupt, 32)
+#pragma INTERRUPT(esmHighInterrupt, FIQ)
 /* SourceId : ESM_SourceId_018 */
 /* DesignId : ESM_DesignId_018 */
 /* Requirements : HL_SR21, HL_SR22 */

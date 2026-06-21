@@ -4,7 +4,7 @@
     <family>TMS570LS12x</family>
     <device>TMS570LS1224PGE</device>
     <dilfile>halcogen_on_board_ecu.dil</dilfile>
-    <tools>arm</tools>
+    <tools>ti</tools>
   </DEVICE>
   <VERSION>
     <version>04.07.01</version>
@@ -168,8 +168,8 @@
         <PATH>source\sys_vim.c</PATH>
       </SRCVIM>
       <SRCMAIN>
-        <NAME>sys_main.c</NAME>
-        <PATH>source\sys_main.c</PATH>
+        <NAME>sys_main.cpp</NAME>
+        <PATH>source\sys_main.cpp</PATH>
       </SRCMAIN>
       <SRCNOTIFY>
         <NAME>notification.c</NAME>

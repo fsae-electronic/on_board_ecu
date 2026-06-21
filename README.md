@@ -1,231 +1,395 @@
-# On-Board ECU Dashboard (TMS570 + FT81x)
+# TMS570 On-Board ECU
 
-This project runs an on-board ECU dashboard on TI TMS570LS12, using a Bridgetek FT81x display/touch controller.
-It receives vehicle data over CAN, renders multiple UI pages, supports touch controls, and transmits dashboard command/status frames back to the network.
+Firmware para la ECU on-board basada en **TI TMS570LS1224**. El proyecto integra:
 
-## Main Features
+- Recepcion y transmision CAN.
+- Interfaz grafica en la Valuation Board.
+- Entrada por botones y llaves GIO.
+- Comunicacion UART por el XDS110.
+- Lectura y escritura de EEPROM con TI FEE.
 
-- Real-time dashboard rendering on FT81x (WQVGA setup).
-- Multi-page UI with touch and swipe navigation:
-  - Race page
-  - Telemetry grid page
-  - Graph page (history per signal)
-  - Debug/calibration page
-- Touch calibration with EEPROM persistence (TI FEE flash emulation).
-- CAN RX pipeline for sensor, motor, status, and dynamic data.
-- CAN TX pipeline for dashboard button commands and ECU status.
-- Internal CAN loopback enabled in software for bench testing.
-- Built-in simulated ECU data transmitter (test frames) for system validation.
+El punto de entrada activo del proyecto es [source/sys_main.cpp](source/sys_main.cpp). El archivo [source/sys_main.c](source/sys_main.c) sigue existiendo en el arbol generado por HALCoGen, pero no es el que debe usarse para el arranque del firmware.
 
-## Runtime Behavior
+## Vision general
 
-- RTI compare 0 updates drawing at about 30 Hz.
-- RTI compare 1 updates data/touch/test periodic tasks at about 60 Hz.
-- Display touch calibration is loaded at boot if saved, otherwise calibration is performed and saved.
+El flujo principal es:
 
-## UI Pages and Interaction
+1. Inicializar reloj, E/S, SCI, CAN, RTI y FEE.
+2. Configurar la pantalla y la logica de dashboard.
+3. Recibir tramas CAN y volcar sus datos en estructuras tipadas.
+4. Actualizar el dashboard y transmitir el estado de botones y modos.
 
-### 1) Race Page
+El proyecto esta pensado para trabajar con mensajes CAN de 8 bytes. En la implementacion actual los payloads se acceden con uniones entre `raw[8]` y estructuras tipadas.
 
-- RPM bar.
-- Motor 1 and Motor 2 blocks: voltage, current, temperature.
-- Center controls display: TPS, front brake, rear brake.
-- Bottom action buttons:
-  - Traction ON/OFF
-  - Mode NORMAL/RACE
-  - Drive ON/OFF
-- Status indicators:
-  - Motor 1 fault
-  - Motor 2 fault
-  - Drive state
+## UART / Consola serie
 
-### 2) Telemetry Page
+El TMS570 envia trazas por el **XDS110 Class Application/User UART**.
 
-16-cell telemetry matrix with tags to open a dedicated graph:
+- Puerto correcto en Windows: normalmente el que aparece como `XDS110 Class Application/User UART`.
+- En esta workspace, el puerto detectado fue `COM4`.
+- El puerto `XDS110 Class Auxiliary Data Port` no es el que se usa para las trazas del firmware.
 
-- M1 V, M1 I, M1 T, Bat V
-- M2 V, M2 I, M2 T, Bat I
-- Steering, TPS, Front Brake, Rear Brake
-- FL/FR/RL/RR wheel speed
+Parametros tipicos de la consola:
 
-### 3) Graph Page
+- 115200 baudios
+- 8 bits de datos
+- sin paridad
+- 1 bit de stop
+- sin control de flujo
 
-- Historical graph for selected metric (ring buffer size: 256 samples).
-- Dynamic Y-scale depending on selected signal.
-- Current numeric value display.
-- Back button to telemetry page.
+Importante: varios mensajes se envian al inicio del `main`, asi que conviene abrir la consola antes de resetear la placa.
 
-### 4) Debug Page
+## Arquitectura de datos
 
-- Calibration actions:
-  - TPS 0%
-  - TPS 100%
-  - Steering left
-  - Steering right
-  - Screen touch calibration
-- Runtime toggles:
-  - Traction ON/OFF
-  - Mode NORMAL/RACE
-  - Drive ON/OFF
-  - Telemetry ON/OFF
+Las estructuras CAN principales estan definidas en [source/data.h](source/data.h).
 
-### Swipe Navigation
+### Datos recibidos
 
-- Horizontal swipe changes page cyclically among Race, Telemetry, and Debug.
-- Graph page is entered from Telemetry cell tags.
+| Estructura | CAN ID | Uso |
+| --- | ---: | --- |
+| `tps_data_t` | `0x501` | TPS y sensores asociados |
+| `front_data_t` | `0x502` | Velocidades delanteras, angulo y freno delantero |
+| `current_data_t` | `0x503` | Corrientes AC/DC de los dos motores |
+| `rear_data_t` | `0x504` | Presion de freno trasero |
+| `driver_status_t` | `0x181` / `0x182` | Estado del driver 1 y 2 |
+| `motor_data_t` | `0x281` / `0x282` | Datos de potencia y temperatura de motor 1 y 2 |
+| `driver_data_t` | `0x381` / `0x382` | Temperatura y tension de driver 1 y 2 |
+| `main_ecu_data_t` | `0x401` | Mensaje asociado a la Main ECU |
 
-## CAN Network Overview
+### Datos transmitidos
 
-All frames are standard 11-bit IDs, DLC = 8 bytes.
-Payload is interpreted in little-endian order for 16-bit fields.
+| Estructura | CAN ID | Uso |
+| --- | ---: | --- |
+| `buttons_data_t` | `0x402` | Estado de botones y modos que el on-board ECU publica |
 
-### Production RX Frames (Dashboard Input)
+## Mapa CAN del firmware
 
-| CAN ID | Mailbox | Direction (ECU view) | Purpose |
-|---|---:|---|---|
-| 0x120 | 1 | RX | Sensors: TPS, brakes, steering |
-| 0x121 | 2 | RX | Wheel speeds |
-| 0x122 | 3 | RX | Motor 1 measurements |
-| 0x123 | 4 | RX | Motor 2 measurements |
-| 0x124 | 5 | RX | Drivers status (faults + drive state) |
-| 0x125 | 6 | RX | Dynamic values (RPM, battery) |
+La inicializacion de CAN en [source/can.c](source/can.c) configura mensajes de 8 bytes y filtros exactos por ID. Los IDs configurados son estos:
 
-### Dashboard TX Frames (Dashboard Output)
+### Mensajes recibidos por CAN
 
-| CAN ID | Mailbox | Direction (ECU view) | Purpose |
-|---|---:|---|---|
-| 0x200 | 9 | TX | Button/command status from touchscreen |
-| 0x201 | 10 | TX | On-board ECU status heartbeat |
+| Message box | CAN ID | Estructura | Descripcion |
+| --- | ---: | --- | --- |
+| 1 | `0x501` | `tps_data_t` | TPS |
+| 2 | `0x502` | `front_data_t` | Datos delanteros |
+| 3 | `0x503` | `current_data_t` | Corrientes |
+| 4 | `0x504` | `rear_data_t` | Freno trasero |
+| 5 | `0x181` | `driver_status_t` | Driver 1 status |
+| 6 | `0x182` | `driver_status_t` | Driver 2 status |
+| 7 | `0x281` | `motor_data_t` | Motor 1 data |
+| 8 | `0x282` | `motor_data_t` | Motor 2 data |
+| 9 | `0x381` | `driver_data_t` | Driver 1 data |
+| 10 | `0x382` | `driver_data_t` | Driver 2 data |
+| 11 | `0x401` | `main_ecu_data_t` | Frame de la Main ECU |
 
-### Test/Simulation TX Frames
+### Mensajes transmitidos por CAN
 
-When test periodic code runs, it transmits simulated data using additional mailboxes:
+| Message box | CAN ID | Estructura | Descripcion |
+| --- | ---: | --- | --- |
+| 12 | `0x402` | `buttons_data_t` | Estado de botones y modos del on-board ECU |
 
-| CAN ID | Mailbox | Direction (ECU view) | Purpose |
-|---|---:|---|---|
-| 0x120 | 17 | TX | Simulated sensors |
-| 0x121 | 18 | TX | Simulated wheel speed |
-| 0x122 | 19 | TX | Simulated motor 1 |
-| 0x123 | 20 | TX | Simulated motor 2 |
-| 0x124 | 21 | TX | Simulated drivers status |
-| 0x125 | 22 | TX | Simulated dynamic values |
+### Mensajes de test
 
-## Sensor and Data Frame Payload Maps
+Si se activa `test_main_ecu_periodic()` en [source/test_main_ecu.cpp](source/test_main_ecu.cpp), se transmiten frames de prueba adicionales:
 
-### Frame 0x120: Sensors (TPS, Brakes, Steering)
+| Message box | CAN ID | Buffer | Contenido |
+| --- | ---: | --- | --- |
+| 17 | configurado en test | `sensors_msg` | TPS, freno delantero, freno trasero, direccion |
+| 18 | configurado en test | `wheel_speed_msg` | Velocidades de rueda |
+| 19 | configurado en test | `motor1_msg` | Tension, corriente, temperatura motor 1 |
+| 20 | configurado en test | `motor2_msg` | Tension, corriente, temperatura motor 2 |
+| 21 | configurado en test | `status_msg` | Fallas motor 1, motor 2 y drive state |
+| 22 | configurado en test | `dynamic_msg` | RPM, tension bateria y corriente bateria |
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0-b1 | uint16 | tps | Throttle position |
-| b2-b3 | uint16 | brake_front | Front brake value |
-| b4-b5 | uint16 | brake_rear | Rear brake value |
-| b6-b7 | uint16 | steering_angle | Steering angle raw |
+Nota: el modulo de test esta en el proyecto, pero en [source/sys_main.cpp](source/sys_main.cpp) su llamada periodica esta comentada.
+Los frames de test se documentan por message box y payload porque en la configuracion CAN visible del proyecto no aparece su arbitraje final en [source/can.c](source/can.c).
 
-### Frame 0x121: Wheel Speeds
+## Significado de cada payload
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0-b1 | uint16 | wheel_speed_fl | Front-left wheel speed |
-| b2-b3 | uint16 | wheel_speed_fr | Front-right wheel speed |
-| b4-b5 | uint16 | wheel_speed_rl | Rear-left wheel speed |
-| b6-b7 | uint16 | wheel_speed_rr | Rear-right wheel speed |
+### 1) `tps_data_t` - CAN ID `0x501`
 
-### Frame 0x122: Motor 1
+Estructura interna:
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0-b1 | uint16 | motor_voltage | Motor DC/phase voltage |
-| b2-b3 | uint16 | motor_current | Motor current |
-| b4-b5 | uint16 | motor_temp | Motor temperature |
-| b6-b7 | uint16 | reserved | Not used |
+- `tps_1` `uint16_t`
+- `tps_2` `uint16_t`
 
-### Frame 0x123: Motor 2
+Uso:
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0-b1 | uint16 | motor_voltage | Motor DC/phase voltage |
-| b2-b3 | uint16 | motor_current | Motor current |
-| b4-b5 | uint16 | motor_temp | Motor temperature |
-| b6-b7 | uint16 | reserved | Not used |
+- `dashboard_data.tps_1` toma `tps_1`.
+- `dashboard_data.tps_2` toma `tps_2`.
+- `dashboard_data.tps` es el promedio de ambos sensores.
 
-### Frame 0x124: Drivers Status
+Interpretacion funcional:
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0 | uint8 | motor1_fault | Fault enum |
-| b1 | uint8 | motor2_fault | Fault enum |
-| b2 | uint8 | drive_state | 0=OFF, 1=ON, 2=FAULT |
-| b3-b7 | uint8 | reserved | Not used |
+- Sensor de pedal acelerador A.
+- Sensor de pedal acelerador B.
+- El promedio se usa como valor final de TPS en el dashboard.
 
-### Frame 0x125: Dynamic Values
+### 2) `front_data_t` - CAN ID `0x502`
 
-| Byte(s) | Type | Field | Notes |
-|---|---|---|---|
-| b0-b1 | uint16 | rpm | Motor/engine RPM |
-| b2-b3 | uint16 | battery_voltage | Battery voltage |
-| b4-b5 | uint16 | battery_current | Battery current |
-| b6-b7 | uint16 | reserved | Not used |
+Estructura interna:
 
-## Dashboard Command/Status Frame Payloads
+- `front_left_speed` `uint16_t`
+- `front_right_speed` `uint16_t`
+- `direction` `uint16_t`
+- `front_brake_pressure` `uint16_t`
 
-### Frame 0x200: Buttons/Commands (Dashboard -> Network)
+Uso:
 
-| Byte | Type | Field | Notes |
-|---|---|---|---|
-| b0 | uint8 | drive_enabled | 0/1 |
-| b1 | uint8 | traction_on | 0/1 |
-| b2 | uint8 | mode | 0=NORMAL, 1=RACE |
-| b3 | uint8 | telemetry_enabled | 0/1 |
-| b4-b7 | uint8 | reserved | Not used |
+- Velocidad rueda delantera izquierda.
+- Velocidad rueda delantera derecha.
+- Angulo/direccion de la direccion delantera.
+- Presion de freno delantero.
 
-### Frame 0x201: On-Board ECU Status
+En el dashboard se copia a:
 
-| Byte | Type | Field | Notes |
-|---|---|---|---|
-| b0 | uint8 | on_board_ok | currently forced to 1 |
-| b1 | uint8 | can_ok | currently forced to 1 |
-| b2-b7 | uint8 | reserved | Not used |
+- `wheel_speed_fl`
+- `wheel_speed_fr`
+- `steering_angle`
+- `brake_front`
 
-## Enumerations Used by Status/UI
+### 3) `current_data_t` - CAN ID `0x503`
 
-### Motor Fault Enum
+Estructura interna:
 
-- 0: NO_FAULT
-- 1: OVERVOLTAGE
-- 2: UNDERVOLTAGE
-- 3: OVERCURRENT
-- 4: OVERTEMP
-- 5: INT_ERROR
+- `ac_current_1` `uint16_t`
+- `ac_current_2` `uint16_t`
+- `dc_current_1` `uint16_t`
+- `dc_current_2` `uint16_t`
 
-### Drive State Enum
+Uso:
 
-- 0: OFF
-- 1: ON
-- 2: FAULT
+- Corriente AC motor 1.
+- Corriente AC motor 2.
+- Corriente DC motor 1.
+- Corriente DC motor 2.
 
-### Mode Enum
+En el dashboard:
 
-- 0: NORMAL
-- 1: RACE
+- `motor1_ac_current`
+- `motor1_dc_current`
+- `motor2_ac_current`
+- `motor2_dc_current`
 
-## Test Pattern Notes
+### 4) `rear_data_t` - CAN ID `0x504`
 
-The simulation routine generates synthetic values and cycles faults/states periodically.
-Important: simulated steering is packed as steering_angle + 180 to avoid negative values in uint16 payload.
+Estructura interna:
 
-## Source Map (Where to Look)
+- `rear_brake_pressure` `uint16_t`
 
-- Main init, RTI callbacks, CAN mailbox notifications: source/sys_main.cpp
-- Data structures and CAN ID constants: source/data.h
-- CAN receive/update/transmit integration: source/data.cpp
-- Dashboard models and rendering: source/dashboard.h, source/dashboard.cpp
-- Touch handling, page switching, tags, calibration persistence: source/ui_touch.cpp
-- Page and graph enums/state: source/pages.h, source/pages.cpp
-- Test simulated CAN generator: source/test_main_ecu.cpp
-- HAL CAN mailbox and ID configuration: source/can.c
+Uso:
 
-## Integration Notes
+- Presion de freno trasero.
 
-- Internal loopback mode is enabled at startup in current code.
-- To use real external CAN bus operation, update loopback configuration as needed.
-- CAN bit timing is configured in HAL initialization (source/can.c), and effective bitrate depends on CAN module input clock.
+En el dashboard:
+
+- `brake_rear`
+
+### 5) `driver_status_t` - CAN IDs `0x181` y `0x182`
+
+Estructura interna:
+
+- `status_word` `uint16_t`
+- `warning` `uint16_t`
+- `error` `uint16_t`
+
+Interpretacion:
+
+- `status_word` contiene el estado operativo del driver.
+- `warning` contiene banderas de advertencia.
+- `error` contiene el codigo de falla activo.
+
+Mapeo de estado en `dashboard.h`:
+
+#### Estado (`driver_status_word_t`)
+
+- `READY_TO_SWITCH_ON = 0`
+- `SWITCHED_ON = 1`
+- `OPERATION_ENABLED = 2`
+- `FAULT = 4`
+- `VOLTAGE_ENABLED = 8`
+- `QUICK_STOP = 16`
+- `SWITCH_ON_DISABLED = 32`
+- `WARNING = 64`
+- `MFR_SPECIFIC = 128`
+- `REMOTE = 256`
+- `TARGET_REACHED = 512`
+- `INTERNAL_LIMIT_ACTIVE = 1024`
+- `OTHER_STATUS = 2048`
+
+#### Warning (`driver_warning_code_t`)
+
+- `NO_WARNING = 1`
+- `CONTROLLER_TEMPERATURE_EXCEEDED = 2`
+- `MOTOR_TEMPERATURE_EXCEEDED = 4`
+- `DC_LINK_UNDERVOLTAGE = 8`
+- `DC_LINK_OVERVOLTAGE = 16`
+- `STALL_PROTECTION = 32`
+- `MAX_VELOCITY_EXCEEDED = 64`
+- `BMS_PROPOSED_POWER = 128`
+- `CAPACITOR_TEMPERATURE_EXCEEDED = 256`
+- `I2T_PROTECTION = 512`
+- `FIELD_WEAKNESS = 1024`
+- `OTHER_WARNING = 2048`
+
+#### Error (`driver_error_code_t`)
+
+- `NO_FAULT = 0`
+- `ERROR_CURRENT_A = 0xFF01`
+- `ERROR_CURRENT_B = 0xFF02`
+- `ERROR_HS_FET = 0xFF03`
+- `ERROR_LS_FET = 0xFF04`
+- `ERROR_DRV_LS_L1 = 0xFF05`
+- `ERROR_DRV_LS_L2 = 0xFF06`
+- `ERROR_DRV_LS_L3 = 0xFF07`
+- `ERROR_DRV_HS_L1 = 0xFF08`
+- `ERROR_DRV_HS_L2 = 0xFF09`
+- `ERROR_DRV_HS_L3 = 0xFF0A`
+- `ERROR_MOTOR_FEEDBACK = 0xFF0B`
+- `ERROR_DC_LINK_UNDERVOLTAGE = 0xFF0C`
+- `ERROR_PULS_MODE_FINISHED = 0xFF0D`
+- `ERROR_APP_ERROR = 0xFF0E`
+- `ERROR_STO_ERROR = 0xFF0F`
+- `ERROR_CONTROLLER_OVERTEMPERATURE = 0xFF10`
+- `ERROR_DC_LINK_OVERVOLTAGE = 0x3210`
+- `ERROR_UNKNOWN = 0xFFFF`
+
+En el dashboard:
+
+- `driver1_warning` y `driver2_warning`
+- `driver1_error` y `driver2_error`
+
+### 6) `motor_data_t` - CAN IDs `0x281` y `0x282`
+
+Estructura interna:
+
+- `dc_voltage` `uint16_t`
+- `rated_current` `uint16_t`
+- `temp` `uint8_t`
+
+Uso:
+
+- Tension DC del motor.
+- Corriente nominal / asociada al motor.
+- Temperatura del motor.
+
+En el dashboard:
+
+- `motor1_dc_voltage` / `motor2_dc_voltage`
+- `motor1_temp` / `motor2_temp`
+
+### 7) `driver_data_t` - CAN IDs `0x381` y `0x382`
+
+Estructura interna:
+
+- `driver_temp` `uint8_t`
+- `driver_voltage` `uint16_t`
+
+Uso:
+
+- Temperatura del driver.
+- Tension del driver.
+
+En el dashboard:
+
+- `driver1_temp` / `driver2_temp`
+- `driver1_voltage` / `driver2_voltage`
+
+### 8) `main_ecu_data_t` - CAN ID `0x401`
+
+Estructura interna:
+
+- `tps` `uint8_t`
+- `mode` `uint8_t`
+- `error_code` `uint8_t`
+
+Significado funcional:
+
+- `tps`: valor resumido del acelerador.
+- `mode`: modo de conduccion.
+- `error_code`: codigo interno de error de la ECU principal.
+
+Enums relacionados en el dashboard:
+
+- `mode_t`: `NORMAL = 0`, `RACE = 1`
+- `main_ecu_error_code_t`:
+  - `MAIN_ECU_NO_ERROR = 0`
+  - `MAIN_ECU_TPS_IMPLAUSIBILITY = 1`
+  - `MAIN_ECU_BREAK_IMPLAUSIBILITY = 2`
+  - `MAIN_ECU_SAFETY_SHUTDOWN = 3`
+  - `MAIN_ECU_OTHER_ERROR = 4`
+
+### 9) `buttons_data_t` - CAN ID `0x402`
+
+Estructura interna:
+
+- `drive_enabled` `uint8_t`
+- `traction_on` `uint8_t`
+- `mode` `uint8_t`
+- `telemetry_enabled` `uint8_t`
+
+Significado:
+
+- `drive_enabled`: habilitacion de drive.
+- `traction_on`: traction control activo.
+- `mode`: modo de conduccion.
+- `telemetry_enabled`: telemetria habilitada.
+
+El firmware toma estos valores desde `dashboard_data` y los transmite por `canMESSAGE_BOX12`.
+
+## Reglas de codificacion de payload
+
+- Todos los mensajes CAN trabajan con 8 bytes.
+- Los campos se copian desde o hacia el buffer `raw[8]` de cada estructura.
+- El orden de bytes sigue la implementacion del compilador y la plataforma del proyecto. Si vas a decodificar desde otra herramienta, valida el endian real con una traza en el bus.
+- Para los frames de estado, warnings y errores, el valor de cada campo debe interpretarse contra los enums definidos en [source/dashboard.h](source/dashboard.h).
+
+## Flujo de runtime
+
+### Inicializacion
+
+En [source/sys_main.cpp](source/sys_main.cpp):
+
+1. Se habilitan interrupciones.
+2. Se inicializa SCI y se fija 115200.
+3. Se inicializa CAN.
+4. Se inicializa la pantalla.
+5. Se inicializa TI FEE.
+6. Se conectan las entradas GIO con variables del dashboard.
+7. Se inicializa RTI.
+8. Se levanta el dashboard.
+
+### Recepcion CAN
+
+Cuando llega un frame CAN:
+
+- `canMessageNotification()` marca `new_data = true` para la estructura correspondiente.
+- `update_data()` llama a `canGetData()` sobre el message box adecuado.
+- Luego copia el contenido del payload a `dashboard_data`.
+
+### Transmision CAN
+
+`update_data()` tambien arma el frame de botones y lo transmite por `canMESSAGE_BOX12`.
+
+## Pines y bus
+
+El pinmux habilita `SCITX` y `SCIRX` en [source/pinmux.c](source/pinmux.c), asi que la consola serie depende del UART expuesto por el XDS110 de la board de evaluacion.
+
+Para CAN, la configuracion principal esta en [source/can.c](source/can.c) y usa los message boxes enumerados arriba.
+
+## Compilacion
+
+El proyecto esta preparado para Code Composer Studio / HALCoGen con toolchain TI ARM C/C++.
+
+Construccion tipica:
+
+1. Abrir el proyecto en CCS.
+2. Seleccionar la configuracion `Debug`.
+3. Compilar.
+4. Flashear en la TMS570LS1224.
+
+## Notas de mantenimiento
+
+- El archivo [halcogen_on_board_ecu.hcg](halcogen_on_board_ecu.hcg) sigue siendo la referencia para regenerar configuracion HALCoGen.
+- Si regeneras el proyecto, revisa que `sys_main.cpp` siga siendo el entry point activo.
+- Si cambias estructuras CAN, actualiza este README junto con [source/data.h](source/data.h) y [source/can.c](source/can.c).

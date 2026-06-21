@@ -35,8 +35,8 @@
 ;
 ;
 
-    area |.text|, code, readonly
-    arm
+    .text
+    .arm
 
 
 ;-------------------------------------------------------------------------------
@@ -46,8 +46,8 @@
 ; DesignId : PMU_DesignId_001
 ; Requirements : HL_SR484
 
-    export     _pmuInit_
-    
+    .def     _pmuInit_
+    .asmfunc
 
 _pmuInit_
 
@@ -76,7 +76,7 @@ _pmuInit_
         mcr   p15, #0, r0, c9, c13, #1 ; select event
         bx    lr
 
-    
+    .endasmfunc
 
 
 ;-------------------------------------------------------------------------------
@@ -86,8 +86,8 @@ _pmuInit_
 ; DesignId : PMU_DesignId_002
 ; Requirements : HL_SR485
 
-    export     _pmuEnableCountersGlobal_
-    
+    .def     _pmuEnableCountersGlobal_
+    .asmfunc
 
 _pmuEnableCountersGlobal_
 
@@ -96,7 +96,7 @@ _pmuEnableCountersGlobal_
         mcr   p15, #0, r0, c9, c12, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Disable Counters Global [Cycle, Event [0..2]]
@@ -104,8 +104,8 @@ _pmuEnableCountersGlobal_
 ; DesignId : PMU_DesignId_003
 ; Requirements : HL_SR485
 
-    export     _pmuDisableCountersGlobal_
-    
+    .def     _pmuDisableCountersGlobal_
+    .asmfunc
 
 _pmuDisableCountersGlobal_
 
@@ -114,7 +114,7 @@ _pmuDisableCountersGlobal_
         mcr   p15, #0, r0, c9, c12, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Reset Cycle Counter
@@ -122,8 +122,8 @@ _pmuDisableCountersGlobal_
 ; DesignId : PMU_DesignId_004
 ; Requirements : HL_SR485
 
-    export     _pmuResetCycleCounter_
-    
+    .def     _pmuResetCycleCounter_
+    .asmfunc
 
 _pmuResetCycleCounter_
 
@@ -132,7 +132,7 @@ _pmuResetCycleCounter_
         mcr   p15, #0, r0, c9, c12, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Reset Event Counters [0..2]
@@ -140,8 +140,8 @@ _pmuResetCycleCounter_
 ; DesignId : PMU_DesignId_005
 ; Requirements : HL_SR485
 
-    export     _pmuResetEventCounters_
-    
+    .def     _pmuResetEventCounters_
+    .asmfunc
 
 _pmuResetEventCounters_
 
@@ -150,7 +150,7 @@ _pmuResetEventCounters_
         mcr   p15, #0, r0, c9, c12, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Reset Cycle Counter abd Event Counters [0..2]
@@ -158,8 +158,8 @@ _pmuResetEventCounters_
 ; DesignId : PMU_DesignId_006
 ; Requirements : HL_SR485
 
-    export     _pmuResetCounters_
-    
+    .def     _pmuResetCounters_
+    .asmfunc
 
 _pmuResetCounters_
 
@@ -168,7 +168,7 @@ _pmuResetCounters_
         mcr   p15, #0, r0, c9, c12, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Start Counters [Cycle, 0..2]
@@ -176,15 +176,15 @@ _pmuResetCounters_
 ; DesignId : PMU_DesignId_007
 ; Requirements : HL_SR485
 
-    export     _pmuStartCounters_
-    
+    .def     _pmuStartCounters_
+    .asmfunc
 
 _pmuStartCounters_
 
         mcr   p15, #0, r0, c9, c12, #1
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Stop Counters [Cycle, 0..2]
@@ -192,15 +192,15 @@ _pmuStartCounters_
 ; DesignId : PMU_DesignId_008
 ; Requirements : HL_SR485
 
-    export     _pmuStopCounters_
-    
+    .def     _pmuStopCounters_
+    .asmfunc
 
 _pmuStopCounters_
 
         mcr   p15, #0, r0, c9, c12, #2
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Set Count event
@@ -208,8 +208,8 @@ _pmuStopCounters_
 ; DesignId : PMU_DesignId_009
 ; Requirements : HL_SR485
 
-    export     _pmuSetCountEvent_
-    
+    .def     _pmuSetCountEvent_
+    .asmfunc
 
 _pmuSetCountEvent_
 
@@ -217,7 +217,7 @@ _pmuSetCountEvent_
         mcr   p15, #0, r1, c9, c13, #1 ; select event
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Get Cycle Count
@@ -225,15 +225,15 @@ _pmuSetCountEvent_
 ; DesignId : PMU_DesignId_010
 ; Requirements : HL_SR486
 
-    export     _pmuGetCycleCount_
-    
+    .def     _pmuGetCycleCount_
+    .asmfunc
 
 _pmuGetCycleCount_
 
         mrc   p15, #0, r0, c9, c13, #0
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Get Event Counter Count Value
@@ -241,8 +241,8 @@ _pmuGetCycleCount_
 ; DesignId : PMU_DesignId_011
 ; Requirements : HL_SR486
 
-    export     _pmuGetEventCount_
-    
+    .def     _pmuGetEventCount_
+    .asmfunc
 
 _pmuGetEventCount_
 
@@ -250,7 +250,7 @@ _pmuGetEventCount_
         mrc   p15, #0, r0, c9, c13, #2 ; read event counter
         bx    lr
 
-    
+    .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Get Overflow Flags
@@ -258,8 +258,8 @@ _pmuGetEventCount_
 ; DesignId : PMU_DesignId_012
 ; Requirements : HL_SR486
 
-    export     _pmuGetOverflow_
-    
+    .def     _pmuGetOverflow_
+    .asmfunc
 
 _pmuGetOverflow_
 
@@ -269,9 +269,9 @@ _pmuGetOverflow_
         mcr   p15, #0, r1, c9, c12, #3 ; clear flags
         bx    lr
 
-    
+    .endasmfunc
 
-    end
+    
 
 ;-------------------------------------------------------------------------------
 

@@ -131,9 +131,13 @@ typedef struct
     uint8_t driver2_warning;
     uint8_t driver2_error;
 
+    uint8_t main_ecu_tps;
+    uint8_t main_ecu_mode;
+    uint8_t main_ecu_error_code; // Internal error code
     
     //Buttons and modes
     uint8_t drive_state;
+    
     uint8_t drive_enabled;
     uint8_t traction_on;
     uint8_t telemetry_enabled;

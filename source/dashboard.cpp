@@ -543,7 +543,6 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         eve.CMD_TEXT(240, 20, 22, Bridgetek_EVE2::OPT_CENTER, "DEBUG MENU");
 
 
-        static int counter = 0;
         
 
 // fila 1: calibraciones TPS

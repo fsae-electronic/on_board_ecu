@@ -42,6 +42,7 @@
 
 
 #include "sys_dma.h"
+#include "sys_vim.h"
 
 /** @fn void dmaEnable(void)
 *   @brief enables DMA module

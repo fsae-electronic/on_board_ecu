@@ -2,12 +2,15 @@
 #include "dashboard.h"
 #include "ui_touch.h"
 #include "data.h"
+#include "inputs.h"
 #include "test_main_ecu.hpp"
 
 
 #include "sys_core.h"
 
 #include "rti.h"
+#include "sci.h"
+#include "can.h"
 
 extern "C" {
 #include "ti_fee.h"
@@ -25,19 +28,42 @@ int main()
 
     _enable_interrupt_();
 
+    sciInit();
+    sciSetBaudrate(sciREG, 115200U);
+
+    // Print initialization message
+    sciSend(sciREG, 64, (uint8_t*)("TMS570 ON-BOARD ECU INITIALIZED\n"));
+
+
+    canInit();
+    canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
+
+    sciSend(sciREG, 64, (uint8_t*)("CAN initialized\n"));
+
+    sciSend(sciREG, 64, (uint8_t*)("Initializing display...\n"));
     display_data.setup(WQVGA);
     display_data.Init();
+    sciSend(sciREG, 64, (uint8_t*)("Display initialized\n"));
 
-    rtiInit();
+    sciSend(sciREG, 64, (uint8_t*)("Initializing EEPROM...\n"));
     TI_Fee_Init();
     while(TI_Fee_GetStatus(0) != IDLE)
     {
         TI_Fee_MainFunction();
     }
+    sciSend(sciREG, 64, (uint8_t*)("EEPROM initialized\n"));
 
+    init_inputs();
+
+    connect_input(INPUT_0, &dashboard_data.drive_enabled);
+    connect_input(INPUT_1, &dashboard_data.traction_on);
+    connect_input(INPUT_2, &dashboard_data.mode);
+    connect_input(INPUT_3, &dashboard_data.telemetry_enabled);
     
+
+    rtiInit();
+
     //CLOCK RTI = 10Mhz
-    // RTI Update rate for screen = 50ms (20Hz)
     rtiSetPeriod(rtiCOMPARE0, SCREEN_UPDATE_TICKS);
     rtiEnableNotification(rtiNOTIFICATION_COMPARE0);
 
@@ -56,8 +82,8 @@ int main()
 
 
 
-    init_data();
-    test_main_ecu_init();
+    //init_data();
+    //test_main_ecu_init();
 
 
     rtiStartCounter(rtiCOUNTER_BLOCK0);              /* Start RTI counter block 0 */
@@ -74,7 +100,6 @@ void rtiNotification(uint32 notification)
 {
     if (notification == rtiNOTIFICATION_COMPARE0)
     {
-        // This will be called at 60Hz, used for screen updates
         update_dashboard_draw(display_data, &dashboard_data);
 
     }
@@ -83,8 +108,9 @@ void rtiNotification(uint32 notification)
         update_dashboard_data(&dashboard_data);
 
 
-        test_main_ecu_periodic();
+        //test_main_ecu_periodic();
         update_data();
+        update_inputs();
 
         ui_handle_touch(display_data, &dashboard_data);
 
@@ -126,6 +152,9 @@ void canMessageNotification(canBASE_t *node, uint32 messageBox)
                 break;
             case canMESSAGE_BOX10:
                 driver2_data.new_data = true;
+                break;
+            case canMESSAGE_BOX11:
+                main_ecu_data.new_data = true;
                 break;
             default:
                 // Handle other message boxes if needed

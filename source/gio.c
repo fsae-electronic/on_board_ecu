@@ -44,6 +44,7 @@
 /* USER CODE END */
 
 #include "gio.h"
+#include "sys_vim.h"
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

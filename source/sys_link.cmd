@@ -37,25 +37,64 @@
 
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-FLASH 0x00000000 0x00140000  
-{
-  VECTORS 0x00000000 0x00000020  
-  {
-   *.o (intvecs, +First)
-  }
-  FLASH0 0x00000020 0x0013FFE0  
-  {
-   *.o (reset, +First)
-   *(InRoot$$Sections)
-   .ANY3 (+RO)
-  }
+/* USER CODE BEGIN (0) */
+/* USER CODE END */
 
-  ARM_LIB_STACK 0x08000000 EMPTY 0x00001500
-  {
-  }
-  RAM 0x08001500 0x0002EB00  
-  {
-   .ANY (+RW +ZI)
-  }
+
+/*----------------------------------------------------------------------------*/
+/* Linker Settings                                                            */
+
+--retain="*(.intvecs)"
+
+/* USER CODE BEGIN (1) */
+/* USER CODE END */
+
+/*----------------------------------------------------------------------------*/
+/* Memory Map                                                                 */
+
+MEMORY
+{
+    VECTORS (X)  : origin=0x00000000 length=0x00000020
+    FLASH0  (RX) : origin=0x00000020 length=0x0013FFE0
+    STACKS  (RW) : origin=0x08000000 length=0x00001500
+    RAM     (RW) : origin=0x08001500 length=0x0002EB00
+
+/* USER CODE BEGIN (2) */
+/* USER CODE END */
 }
+
+/* USER CODE BEGIN (3) */
+/* USER CODE END */
+
+/*----------------------------------------------------------------------------*/
+/* Section Configuration                                                      */
+
+SECTIONS
+{
+    .intvecs : {} > VECTORS
+    .text    : {} > FLASH0 
+    .const   : {} > FLASH0 
+    .cinit   : {} > FLASH0 
+    .pinit   : {} > FLASH0 
+    .bss     : {} > RAM
+    .data    : {} > RAM
+    .sysmem  : {} > RAM
+    
+    FEE_TEXT_SECTION : {} > FLASH0 
+    FEE_CONST_SECTION : {} > FLASH0
+    FEE_DATA_SECTION : {} > RAM
+
+/* USER CODE BEGIN (4) */
+/* USER CODE END */
+}
+
+/* USER CODE BEGIN (5) */
+/* USER CODE END */
+
+
+/*----------------------------------------------------------------------------*/
+/* Misc                                                                       */
+
+/* USER CODE BEGIN (6) */
+/* USER CODE END */
 /*----------------------------------------------------------------------------*/

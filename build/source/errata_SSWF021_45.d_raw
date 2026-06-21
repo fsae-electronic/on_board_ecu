@@ -1,3 +1,0 @@
-build/source/errata_SSWF021_45.obj: source/errata_SSWF021_45.c
-build/source/errata_SSWF021_45.obj: /home/asolari/tesis_ecu/on_board_ecu/include/errata_SSWF021_45_defs.h
-build/source/errata_SSWF021_45.obj: /home/asolari/tesis_ecu/on_board_ecu/include/errata_SSWF021_45.h

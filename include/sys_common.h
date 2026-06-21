@@ -120,13 +120,6 @@ typedef enum config_value_type
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
 
-#if defined(__TI_EABI__)
-#define IRQ __attribute__((interrupt("IRQ")))
-#define FIQ __attribute__((interrupt("FIQ")))
-#else
-#define IRQ __irq
-#define FIQ __irq
-#endif
 /* USER CODE BEGIN (3) */
 /* USER CODE END */
 #ifdef __cplusplus

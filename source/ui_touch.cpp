@@ -221,14 +221,14 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IDC; break;
                 case 16: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IAC; break;
                 case 17: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_T; break;
-                case 18: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
+                case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
                 case 19: current_page = PAGE_GRAPH; current_graph = GRAPH_STEER; break;
-                case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_FRONT_BRK; break;
-                case 21: current_page = PAGE_GRAPH; current_graph = GRAPH_REAR_BRK; break;
-                case 22: current_page = PAGE_GRAPH; current_graph = GRAPH_FL_SPD; break;
-                case 23: current_page = PAGE_GRAPH; current_graph = GRAPH_FR_SPD; break;
-                case 24: current_page = PAGE_GRAPH; current_graph = GRAPH_RL_SPD; break;
-                case 25: current_page = PAGE_GRAPH; current_graph = GRAPH_RR_SPD; break;
+                case 21: current_page = PAGE_GRAPH; current_graph = GRAPH_FRONT_BRK; break;
+                case 22: current_page = PAGE_GRAPH; current_graph = GRAPH_REAR_BRK; break;
+                case 23: current_page = PAGE_GRAPH; current_graph = GRAPH_FL_SPD; break;
+                case 24: current_page = PAGE_GRAPH; current_graph = GRAPH_FR_SPD; break;
+                case 25: current_page = PAGE_GRAPH; current_graph = GRAPH_RL_SPD; break;
+                case 26: current_page = PAGE_GRAPH; current_graph = GRAPH_RR_SPD; break;
 
                 case 30: current_page = PAGE_TELEMETRY; current_graph = GRAPH_NONE; break;
 

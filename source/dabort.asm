@@ -35,16 +35,16 @@
 ;
 ;
 
-    area |.text|, code, readonly
-    arm
+    .text
+    .arm
 
 
 ;-------------------------------------------------------------------------------
 ; Run Memory Test
 
-    import	custom_dabort
-    export	_dabort
-    
+    .ref	custom_dabort
+    .def	_dabort
+    .asmfunc
 
 _dabort
 		stmfd	r13!, {r0 - r12, lr}; push registers and link register on to stack
@@ -134,13 +134,13 @@ flashErrorFound
 flashErrorReal
 		b		flashErrorReal		; branch here forever as continuing operation is not recommended
 		
-esmsr3		dcd	0xFFFFF520
-ramctrl		dcd	0xFFFFF800
-ram2ctrl	dcd	0xFFFFF900
-ram1errstat	dcd	0xFFFFF810
-ram2errstat	dcd	0xFFFFF910
-flashbase	dcd	0xFFF87000
+esmsr3		.word	0xFFFFF520
+ramctrl		.word	0xFFFFF800
+ram2ctrl	.word	0xFFFFF900
+ram1errstat	.word	0xFFFFF810
+ram2errstat	.word	0xFFFFF910
+flashbase	.word	0xFFF87000
 
-    
+    .endasmfunc
 	
-	end
+	

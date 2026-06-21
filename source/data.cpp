@@ -1,8 +1,8 @@
 #include "data.h"
 #include "dashboard.h"
+#include "sci.h"
 
 #include "can.h"
-#include "sci.h"
 #include <string.h>
 
 
@@ -21,6 +21,8 @@ motor_data_t motor2_data(MOTOR2_DATA_ID);
 driver_data_t driver1_data(DRIVER1_DATA_ID);
 driver_data_t driver2_data(DRIVER2_DATA_ID);
 
+main_ecu_data_t main_ecu_data;
+
 buttons_data_t buttons_data;
 
 
@@ -30,13 +32,6 @@ void init_data(void)
     canInit();
     canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
 
-
-
-    sciInit();
-    sciSetBaudrate(sciREG, 115200U);
-
-    const char *msg = "TMS570 ON-BOARD ECU INITIALIZED\n";
-    sciSend(sciREG, strlen(msg), (uint8*)msg);
 }
 
 
@@ -44,7 +39,7 @@ void update_data(void)
 {
     // This function can be used to perform any periodic updates or checks for the drivers if needed
     // Send data of buttons status to dashboard
-    if(tps_data.new_data)
+    if(tps_data.new_data) 
     {
         canGetData(canREG1, canMESSAGE_BOX1, tps_data.raw);
         dashboard_data.tps_1 = (float)tps_data.values.tps_1;
@@ -118,6 +113,14 @@ void update_data(void)
         dashboard_data.driver2_voltage = (float)driver2_data.values.driver_voltage;
         driver2_data.new_data = false;
     }
+    if(main_ecu_data.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX11, main_ecu_data.raw);
+        main_ecu_data.values.tps = dashboard_data.main_ecu_tps; // Use the averaged TPS value from the dashboard
+        main_ecu_data.values.mode = dashboard_data.main_ecu_mode;
+        main_ecu_data.values.error_code = dashboard_data.main_ecu_error_code; // No error for now, can
+        main_ecu_data.new_data = false;
+    }
 
     // Process data
     dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
@@ -131,7 +134,7 @@ void update_data(void)
     buttons_data.values.traction_on = dashboard_data.traction_on;
     buttons_data.values.telemetry_enabled = dashboard_data.telemetry_enabled;
     buttons_data.values.mode = dashboard_data.mode;
-    canTransmit(canREG1, canMESSAGE_BOX11, buttons_data.raw);
+    canTransmit(canREG1, canMESSAGE_BOX12, buttons_data.raw);
 
 
 }
@@ -139,7 +142,6 @@ void update_data(void)
 // CAN message notification callback
 // This function will be called by the CAN driver when a new message is 
 // received in one of the configured message boxes
-
 
 
 

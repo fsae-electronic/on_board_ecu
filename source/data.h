@@ -28,6 +28,7 @@
 
 #define MAIN_ECU_ID 0x401   
 
+#define ON_BOARD_ECU_ID 0x402
 
 
 typedef struct
@@ -205,6 +206,8 @@ extern motor_data_t motor2_data;
 
 extern driver_data_t driver1_data;
 extern driver_data_t driver2_data;
+
+extern main_ecu_data_t main_ecu_data;
 
 extern buttons_data_t buttons_data;
 

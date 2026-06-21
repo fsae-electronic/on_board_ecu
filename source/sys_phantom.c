@@ -43,6 +43,7 @@
 
 
 #include "sys_common.h"
+#include "sys_vim.h"
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -52,7 +53,9 @@
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
-IRQ
+#pragma CODE_STATE(phantomInterrupt, 32)
+#pragma INTERRUPT(phantomInterrupt, IRQ)
+#pragma WEAK(phantomInterrupt)
 
 void phantomInterrupt(void)
 {
