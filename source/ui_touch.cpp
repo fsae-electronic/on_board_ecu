@@ -3,6 +3,8 @@
 extern "C" {
 #include "ti_fee.h"
 }
+// Sound driver for touch feedback
+#include "../ft81x_driver/sound.h"
 // EEPROM storage structure for touch calibration only
 struct EEPROMData {
     union
@@ -198,6 +200,8 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
 
             last_x = tx;
             last_y = ty;
+            // reproducir pip al inicio del toque
+            playPip(NOTE_C4);
         }
 
         if (eve_read_tag(eve, &key)) {
@@ -233,7 +237,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 30: current_page = PAGE_TELEMETRY; current_graph = GRAPH_NONE; break;
 
                 case 40:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_tps_0 == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_tps_0 = 1;
                         cal_tps_0_timer = 50;
@@ -241,7 +245,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 41:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_tps_100 == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_tps_100 = 1;
                         cal_tps_100_timer = 50;
@@ -254,7 +258,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 45: data->telemetry_enabled = !data->telemetry_enabled; break;
 
                 case 46:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_left_steer == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_left_steer = 1;
                         cal_left_steer_timer = 50;
@@ -262,7 +266,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 47:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_right_steer == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_right_steer = 1;
                         cal_right_steer_timer = 50;
@@ -270,7 +274,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 48:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_center_steer == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_center_steer = 1;
                         cal_center_steer_timer = 50;
@@ -285,7 +289,7 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 50:
-                    if((data->canopen_state == PRE_OPERATIONAL) && (data->cal_current_sensors == 0))
+                    if(data->canopen_state == PRE_OPERATIONAL)
                     {
                         data->cal_current_sensors = 1;
                         cal_current_sensors_timer = 50;
