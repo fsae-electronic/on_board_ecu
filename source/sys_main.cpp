@@ -3,7 +3,6 @@
 #include "ui_touch.h"
 #include "data.h"
 #include "inputs.h"
-#include "test_main_ecu.hpp"
 
 
 #include "sys_core.h"
@@ -38,6 +37,13 @@ int main()
     canInit();
     canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
 
+    init_inputs();
+
+    connect_input(INPUT_0, &dashboard_data.drive_enabled);
+    connect_input(INPUT_1, &dashboard_data.traction_on);
+    connect_input(INPUT_2, &dashboard_data.mode);
+    connect_input(INPUT_3, &dashboard_data.telemetry_enabled);
+
     sciSend(sciREG, 64, (uint8_t*)("CAN initialized\n"));
 
     sciSend(sciREG, 64, (uint8_t*)("Initializing display...\n"));
@@ -46,6 +52,9 @@ int main()
     sciSend(sciREG, 64, (uint8_t*)("Display initialized\n"));
 
     sciSend(sciREG, 64, (uint8_t*)("Initializing EEPROM...\n"));
+
+    rtiInit();
+
     TI_Fee_Init();
     while(TI_Fee_GetStatus(0) != IDLE)
     {
@@ -53,15 +62,9 @@ int main()
     }
     sciSend(sciREG, 64, (uint8_t*)("EEPROM initialized\n"));
 
-    init_inputs();
 
-    connect_input(INPUT_0, &dashboard_data.drive_enabled);
-    connect_input(INPUT_1, &dashboard_data.traction_on);
-    connect_input(INPUT_2, &dashboard_data.mode);
-    connect_input(INPUT_3, &dashboard_data.telemetry_enabled);
     
 
-    rtiInit();
 
     //CLOCK RTI = 10Mhz
     rtiSetPeriod(rtiCOMPARE0, SCREEN_UPDATE_TICKS);
@@ -77,13 +80,8 @@ int main()
         eve_calibrate(display_data);
         saveCalibration(display_data);
     }
-    //eve_calibrate(display_data);
-    //saveCalibration(display_data);
 
 
-
-    //init_data();
-    //test_main_ecu_init();
 
 
     rtiStartCounter(rtiCOUNTER_BLOCK0);              /* Start RTI counter block 0 */
@@ -108,7 +106,6 @@ void rtiNotification(uint32 notification)
         update_dashboard_data(&dashboard_data);
 
 
-        //test_main_ecu_periodic();
         update_data();
         update_inputs();
 

@@ -1,10 +1,10 @@
 # FIXED
 
 source/sys_vim.obj: ../source/sys_vim.c
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -16,23 +16,23 @@ source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/inclu
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 source/sys_vim.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/system.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_system.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_flash.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_tcram.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/esm.h
-source/sys_vim.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_esm.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/system.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_system.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_flash.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_tcram.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/esm.h
+source/sys_vim.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_esm.h
 
 ../source/sys_vim.c:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 
@@ -56,17 +56,17 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/system.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/system.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_system.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_system.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_flash.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_flash.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_tcram.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_tcram.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/esm.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/esm.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_esm.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_esm.h:
 

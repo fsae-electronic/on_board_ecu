@@ -40,6 +40,12 @@
 #ifndef EVE_SOUNDS_H
 #define EVE_SOUNDS_H
 
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SOUND_SILENCE 0x00 // Silence Y N
 #define SOUND_SQUARE 0x01 // Square wave Y Y
 #define SOUND_SINE 0x02 // Sine wave Y Y
@@ -195,5 +201,9 @@ void playChimes(uint8_t note);
 void playBell(uint8_t note);
 void playPip(uint8_t note);
 void playClack(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // EVE_SOUNDS_H

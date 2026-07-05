@@ -33,14 +33,14 @@ void ui_draw_rpm_bar(Bridgetek_EVE2 &eve, float rpm)
     eve.COLOR_RGB(255,255,255);
 
     eve.CMD_NUMBER(
-        100,
+        80,
         30,
         31,
         Bridgetek_EVE2::OPT_CENTER,
         rpm
     );
     eve.CMD_TEXT(
-        175,
+        160,
         40,
         26,
         Bridgetek_EVE2::OPT_CENTER,

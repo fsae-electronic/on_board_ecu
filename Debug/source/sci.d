@@ -1,10 +1,10 @@
 # FIXED
 
 source/sci.obj: ../source/sci.c
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sci.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_sci.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sci.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_sci.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -16,22 +16,22 @@ source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/m
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h
-source/sci.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h
+source/sci.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/math.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_defs.h
 source/sci.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_limits.h
 
 ../source/sci.c:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sci.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sci.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_sci.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_sci.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 
@@ -55,11 +55,11 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/math.h:
 

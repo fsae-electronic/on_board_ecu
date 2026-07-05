@@ -2,10 +2,10 @@
 
 source/inputs.obj: ../source/inputs.c
 source/inputs.obj: ../source/inputs.h
-source/inputs.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/gio.h
-source/inputs.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h
-source/inputs.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h
-source/inputs.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
+source/inputs.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/gio.h
+source/inputs.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h
+source/inputs.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h
+source/inputs.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h
 source/inputs.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 source/inputs.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 source/inputs.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -22,13 +22,13 @@ source/inputs.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/includ
 
 ../source/inputs.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/gio.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/gio.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 

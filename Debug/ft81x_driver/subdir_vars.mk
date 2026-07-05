@@ -11,17 +11,20 @@ CPP_SRCS += \
 
 C_SRCS += \
 ../ft81x_driver/EVE_API.c \
-../ft81x_driver/EVE_HAL.c 
+../ft81x_driver/EVE_HAL.c \
+../ft81x_driver/sound.c 
 
 C_DEPS += \
 ./ft81x_driver/EVE_API.d \
-./ft81x_driver/EVE_HAL.d 
+./ft81x_driver/EVE_HAL.d \
+./ft81x_driver/sound.d 
 
 OBJS += \
 ./ft81x_driver/Bridgetek_EVE2.obj \
 ./ft81x_driver/EVE_API.obj \
 ./ft81x_driver/EVE_HAL.obj \
-./ft81x_driver/EVE_MCU.obj 
+./ft81x_driver/EVE_MCU.obj \
+./ft81x_driver/sound.obj 
 
 CPP_DEPS += \
 ./ft81x_driver/Bridgetek_EVE2.d \
@@ -31,11 +34,13 @@ OBJS__QUOTED += \
 "ft81x_driver\Bridgetek_EVE2.obj" \
 "ft81x_driver\EVE_API.obj" \
 "ft81x_driver\EVE_HAL.obj" \
-"ft81x_driver\EVE_MCU.obj" 
+"ft81x_driver\EVE_MCU.obj" \
+"ft81x_driver\sound.obj" 
 
 C_DEPS__QUOTED += \
 "ft81x_driver\EVE_API.d" \
-"ft81x_driver\EVE_HAL.d" 
+"ft81x_driver\EVE_HAL.d" \
+"ft81x_driver\sound.d" 
 
 CPP_DEPS__QUOTED += \
 "ft81x_driver\Bridgetek_EVE2.d" \
@@ -47,6 +52,7 @@ CPP_SRCS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../ft81x_driver/EVE_API.c" \
-"../ft81x_driver/EVE_HAL.c" 
+"../ft81x_driver/EVE_HAL.c" \
+"../ft81x_driver/sound.c" 
 
 

@@ -1,7 +1,7 @@
 # FIXED
 
 ft81x_driver/Bridgetek_EVE2.obj: ../ft81x_driver/Bridgetek_EVE2.cpp
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdint.h
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__config
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__config_site
@@ -17,16 +17,16 @@ ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 ft81x_driver/Bridgetek_EVE2.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdarg.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE2.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE_config.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT8xx.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT81x.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/HAL.h
-ft81x_driver/Bridgetek_EVE2.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE2.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE_config.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT8xx.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h
+ft81x_driver/Bridgetek_EVE2.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h
 
 ../ft81x_driver/Bridgetek_EVE2.cpp:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdint.h:
 
@@ -58,15 +58,15 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdarg.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE2.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE2.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE_config.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE_config.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT8xx.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT8xx.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT81x.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/HAL.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h:
 

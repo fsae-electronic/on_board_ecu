@@ -10,7 +10,6 @@ CPP_SRCS += \
 ../source/data.cpp \
 ../source/pages.cpp \
 ../source/sys_main.cpp \
-../source/test_main_ecu.cpp \
 ../source/ui_buttons.cpp \
 ../source/ui_rpm_bar.cpp \
 ../source/ui_touch.cpp 
@@ -127,7 +126,6 @@ OBJS += \
 ./source/sys_startup.obj \
 ./source/sys_vim.obj \
 ./source/system.obj \
-./source/test_main_ecu.obj \
 ./source/ti_fee_Info.obj \
 ./source/ti_fee_cancel.obj \
 ./source/ti_fee_cfg.obj \
@@ -158,7 +156,6 @@ CPP_DEPS += \
 ./source/data.d \
 ./source/pages.d \
 ./source/sys_main.d \
-./source/test_main_ecu.d \
 ./source/ui_buttons.d \
 ./source/ui_rpm_bar.d \
 ./source/ui_touch.d 
@@ -193,7 +190,6 @@ OBJS__QUOTED += \
 "source\sys_startup.obj" \
 "source\sys_vim.obj" \
 "source\system.obj" \
-"source\test_main_ecu.obj" \
 "source\ti_fee_Info.obj" \
 "source\ti_fee_cancel.obj" \
 "source\ti_fee_cfg.obj" \
@@ -253,7 +249,6 @@ CPP_DEPS__QUOTED += \
 "source\data.d" \
 "source\pages.d" \
 "source\sys_main.d" \
-"source\test_main_ecu.d" \
 "source\ui_buttons.d" \
 "source\ui_rpm_bar.d" \
 "source\ui_touch.d" 
@@ -313,7 +308,6 @@ CPP_SRCS__QUOTED += \
 "../source/data.cpp" \
 "../source/pages.cpp" \
 "../source/sys_main.cpp" \
-"../source/test_main_ecu.cpp" \
 "../source/ui_buttons.cpp" \
 "../source/ui_rpm_bar.cpp" \
 "../source/ui_touch.cpp" 

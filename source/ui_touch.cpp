@@ -225,31 +225,25 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 15: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV2_IDC; break;
                 case 16: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_IAC; break;
                 case 17: current_page = PAGE_GRAPH; current_graph = GRAPH_M2_T; break;
-                case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
+                case 18: current_page = PAGE_GRAPH; current_graph = GRAPH_TPS; break;
                 case 19: current_page = PAGE_GRAPH; current_graph = GRAPH_STEER; break;
-                case 21: current_page = PAGE_GRAPH; current_graph = GRAPH_FRONT_BRK; break;
-                case 22: current_page = PAGE_GRAPH; current_graph = GRAPH_REAR_BRK; break;
-                case 23: current_page = PAGE_GRAPH; current_graph = GRAPH_FL_SPD; break;
-                case 24: current_page = PAGE_GRAPH; current_graph = GRAPH_FR_SPD; break;
-                case 25: current_page = PAGE_GRAPH; current_graph = GRAPH_RL_SPD; break;
-                case 26: current_page = PAGE_GRAPH; current_graph = GRAPH_RR_SPD; break;
+                case 20: current_page = PAGE_GRAPH; current_graph = GRAPH_FRONT_BRK; break;
+                case 21: current_page = PAGE_GRAPH; current_graph = GRAPH_REAR_BRK; break;
+                case 22: current_page = PAGE_GRAPH; current_graph = GRAPH_FL_SPD; break;
+                case 23: current_page = PAGE_GRAPH; current_graph = GRAPH_FR_SPD; break;
+                case 24: current_page = PAGE_GRAPH; current_graph = GRAPH_RL_SPD; break;
+                case 25: current_page = PAGE_GRAPH; current_graph = GRAPH_RR_SPD; break;
 
                 case 30: current_page = PAGE_TELEMETRY; current_graph = GRAPH_NONE; break;
 
                 case 40:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_tps_0 = 1;
-                        cal_tps_0_timer = 50;
-                    }
+                    data->cal_tps_0 = 1;
+                    cal_tps_0_timer = 50;
                     break;
 
                 case 41:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_tps_100 = 1;
-                        cal_tps_100_timer = 50;
-                    }
+                    data->cal_tps_100 = 1;
+                    cal_tps_100_timer = 50;
                     break;
 
                 case 42: data->traction_on = !data->traction_on; break;
@@ -258,27 +252,19 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 45: data->telemetry_enabled = !data->telemetry_enabled; break;
 
                 case 46:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_left_steer = 1;
-                        cal_left_steer_timer = 50;
-                    }
+                    data->cal_left_steer = 1;
+                    cal_left_steer_timer = 50;
                     break;
 
                 case 47:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_right_steer = 1;
-                        cal_right_steer_timer = 50;
-                    }
+                    data->cal_right_steer = 1;
+                    cal_right_steer_timer = 50;
                     break;
 
                 case 48:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_center_steer = 1;
-                        cal_center_steer_timer = 50;
-                    }
+
+                    data->cal_center_steer = 1;
+                    cal_center_steer_timer = 50;
                     break;
 
                 case 49:
@@ -289,11 +275,8 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                     break;
 
                 case 50:
-                    if(data->canopen_state == PRE_OPERATIONAL)
-                    {
-                        data->cal_current_sensors = 1;
-                        cal_current_sensors_timer = 50;
-                    }
+                    data->cal_current_sensors = 1;
+                    cal_current_sensors_timer = 50;
                     break;
                 case 51: break;
             }

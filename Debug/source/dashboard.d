@@ -2,7 +2,7 @@
 
 source/dashboard.obj: ../source/dashboard.cpp
 source/dashboard.obj: ../source/dashboard.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdint.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__config
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/__config_site
@@ -18,12 +18,12 @@ source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/inc
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdarg.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE2.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE_config.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT8xx.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT81x.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/HAL.h
-source/dashboard.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE2.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE_config.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT8xx.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h
+source/dashboard.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h
 source/dashboard.obj: ../source/ui_rpm_bar.h
 source/dashboard.obj: ../source/ui_buttons.h
 source/dashboard.obj: ../source/pages.h
@@ -49,7 +49,7 @@ source/dashboard.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/inc
 
 ../source/dashboard.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/Bridgetek_EVE2.hpp:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/libcxx/stdint.h:
 
@@ -81,17 +81,17 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdarg.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE2.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE2.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/EVE_config.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/EVE_config.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT8xx.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT8xx.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/FT81x.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/HAL.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/ft81x_driver/MCU.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h:
 
 ../source/ui_rpm_bar.h:
 

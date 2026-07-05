@@ -1,10 +1,10 @@
 # FIXED
 
 source/system.obj: ../source/system.c
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/system.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_system.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/system.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_system.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -16,44 +16,44 @@ source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/includ
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_flash.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_tcram.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_selftest.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pbist.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_stc.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_efc.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_core.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/adc.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_adc.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/can.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_can.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/mibspi.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_mibspi.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/het.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_het.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_flash.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_tcram.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_selftest.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pbist.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_stc.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_efc.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_core.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/adc.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_adc.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/can.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_can.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/mibspi.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_mibspi.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/het.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_het.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/string.h
 source/system.obj: C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/xlocale/_string.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/htu.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_htu.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/esm.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_esm.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_pcr.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pcr.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/pinmux.h
-source/system.obj: C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pinmux.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/htu.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_htu.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/esm.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_esm.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_pcr.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pcr.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/pinmux.h
+source/system.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pinmux.h
 
 ../source/system.c:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/system.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/system.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_system.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_system.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_common.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/hal_stdtypes.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/hal_stdtypes.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 
@@ -77,59 +77,59 @@ C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_gio.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_gio.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_flash.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_flash.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_tcram.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_tcram.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_selftest.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_selftest.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pbist.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pbist.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_stc.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_stc.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_efc.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_efc.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_core.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_core.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_vim.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_vim.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_vim.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/adc.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/adc.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_adc.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_adc.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/can.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/can.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_can.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_can.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/mibspi.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/mibspi.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_mibspi.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_mibspi.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/het.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/het.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_het.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_het.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/string.h:
 
 C:/ti/ccs1281/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/xlocale/_string.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/htu.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/htu.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_htu.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_htu.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/esm.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/esm.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_esm.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_esm.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/sys_pcr.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_pcr.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pcr.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pcr.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/pinmux.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/pinmux.h:
 
-C:/Users/agust/workspace_v12/tms570_on_board_ecu/include/reg_pinmux.h:
+G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_pinmux.h:
 

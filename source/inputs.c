@@ -2,14 +2,11 @@
 #include "gio.h"
 
 uint8_t *input_targets[4] = {0};
+static uint8_t last_input_states[4] = {0};
 
 
 void init_inputs(void)
 {
-    // Initialize GPIO pins for buttons, switches, etc. as needed
-    // For example, if using gio:
-    gioInit();
-
     uint32_t dirB = 0U;
 
     dirB |= (1U << 0);   // GIOB[0] -> Button 1
@@ -40,13 +37,20 @@ bool read_inputs(input_source_t source)
 
 void update_inputs(void)
 {
-    // This function can be called periodically to read the state of the inputs and update the linked variables
+    // Toggle the linked variable only on a low->high transition.
     for (int i = 0; i < 4; i++)
     {
+        uint8_t current_state = (uint8_t)read_inputs((input_source_t)i);
+
         if (input_targets[i] != 0)
         {
-            *input_targets[i] = (uint8_t)read_inputs((input_source_t)i);
+            if (current_state && !last_input_states[i])
+            {
+                *input_targets[i] = (uint8_t)!(*input_targets[i]);
+            }
         }
+
+        last_input_states[i] = current_state;
     }
 }
 
@@ -58,5 +62,6 @@ void connect_input(input_source_t source, uint8_t *target_variable)
     if (source < 4)
     {
         input_targets[source] = target_variable;
+        last_input_states[source] = (uint8_t)read_inputs(source);
     }
 }

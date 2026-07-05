@@ -169,7 +169,7 @@
       </SRCVIM>
       <SRCMAIN>
         <NAME>sys_main.cpp</NAME>
-        <PATH>source\sys_main.cpp</PATH>
+        <PATH>sys_main.cpp</PATH>
       </SRCMAIN>
       <SRCNOTIFY>
         <NAME>notification.c</NAME>

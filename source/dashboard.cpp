@@ -81,34 +81,34 @@ void draw_center(Bridgetek_EVE2 &eve, dashboard_data_t *d)
 
 void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
 {
-    int x = 265;
-    int y = 8;
+    int x = 270;
+    int y = 5;
     char line[64];
 
     auto warning_to_str = [](uint8_t warning) -> const char *
     {
         switch(warning)
         {
-            case NO_WARNING: return "NO_WARNING";
+            case NO_WARNING: return "NO_WARN";
             case CONTROLLER_TEMPERATURE_EXCEEDED: return "CTRL_TEMP";
-            case MOTOR_TEMPERATURE_EXCEEDED: return "MOTOR_TEMP";
+            case MOTOR_TEMPERATURE_EXCEEDED: return "MTR_TEMP";
             case DC_LINK_UNDERVOLTAGE: return "DC_UV";
             case DC_LINK_OVERVOLTAGE: return "DC_OV";
             case STALL_PROTECTION: return "STALL";
             case MAX_VELOCITY_EXCEEDED: return "MAX_VEL";
-            case BMS_PROPOSED_POWER: return "BMS_LIMIT";
-            default: return "WARN_UNKNOWN";
+            case BMS_PROPOSED_POWER: return "BMS_LIM";
+            default: return "WARN_UNK";
         }
     };
 
     auto error_to_str = [](uint8_t error) -> const char *
     {
-        if(error == (uint8_t)NO_FAULT) return "NO_FAULT";
+        if(error == (uint8_t)NO_FAULT) return "NO_FLT";
 
         switch((uint16_t)(0xFF00U | error))
         {
-            case ERROR_CURRENT_A: return "CURRENT_A";
-            case ERROR_CURRENT_B: return "CURRENT_B";
+            case ERROR_CURRENT_A: return "CUR_A";
+            case ERROR_CURRENT_B: return "CUR_B";
             case ERROR_HS_FET: return "HS_FET";
             case ERROR_LS_FET: return "LS_FET";
             case ERROR_DRV_LS_L1: return "DRV_LS_L1";
@@ -117,13 +117,13 @@ void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             case ERROR_DRV_HS_L1: return "DRV_HS_L1";
             case ERROR_DRV_HS_L2: return "DRV_HS_L2";
             case ERROR_DRV_HS_L3: return "DRV_HS_L3";
-            case ERROR_MOTOR_FEEDBACK: return "MOTOR_FB";
+            case ERROR_MOTOR_FEEDBACK: return "MTR_FB";
             case ERROR_DC_LINK_UNDERVOLTAGE: return "DC_UV";
-            case ERROR_PULS_MODE_FINISHED: return "PULSE_END";
+            case ERROR_PULS_MODE_FINISHED: return "PLS_END";
             case ERROR_APP_ERROR: return "APP_ERR";
             case ERROR_STO_ERROR: return "STO_ERR";
             case ERROR_CONTROLLER_OVERTEMPERATURE: return "CTRL_TEMP";
-            default: return "ERR_UNKNOWN";
+            default: return "ERR_UNK";
         }
     };
 
@@ -131,35 +131,37 @@ void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
     {
         switch(canopen_state)
         {
-            case BOOTUP: return "Bootup";
-            case PRE_OPERATIONAL: return "Pre-operational";
-            case OPERATIONAL: return "Operational";
-            case STOPPED: return "Stopped";
-            default: return "STATE_UNKNOWN";
+            case BOOTUP: return "BOOT";
+            case PRE_OPERATIONAL: return "PRE_OP";
+            case OPERATIONAL: return "OP";
+            case STOPPED: return "STOP";
+            default: return "STOP_UNK";
         }
     };
 
-    eve.COLOR_RGB(0,255,255);
-    sprintf(line, "D1 W:%u %s", d->driver1_warning, warning_to_str(d->driver1_warning));
-    eve.CMD_TEXT(x, y, 20, 0, line);
-
-    eve.COLOR_RGB(255,120,120);
-    sprintf(line, "D1 E:%u %s", d->driver1_error, error_to_str(d->driver1_error));
-    eve.CMD_TEXT(x, y + 18, 20, 0, line);
-
-    eve.COLOR_RGB(0,255,255);
-    sprintf(line, "D2 W:%u %s", d->driver2_warning, warning_to_str(d->driver2_warning));
-    eve.CMD_TEXT(x, y + 36, 20, 0, line);
-
-    eve.COLOR_RGB(255,120,120);
-    sprintf(line, "D2 E:%u %s", d->driver2_error, error_to_str(d->driver2_error));
-    eve.CMD_TEXT(x, y + 54, 20, 0, line);
 
     eve.COLOR_RGB(255,255,0);
-    sprintf(line, "CANopen:%u %s", d->canopen_state, canopen_to_str(d->canopen_state));
-    eve.CMD_TEXT(x, y + 72, 20, 0, line);
+    sprintf(line, "W1: %s", warning_to_str(d->driver1_warning));
+    eve.CMD_TEXT(x-65, y, 21, 0, line);
+
+    eve.COLOR_RGB(255,0,0);
+    sprintf(line, "E1: %s", error_to_str(d->driver1_error));
+    eve.CMD_TEXT(x-65, y + 18, 21, 0, line);
+
+    eve.COLOR_RGB(255,255,0);
+    sprintf(line, "W2: %s", warning_to_str(d->driver2_warning));
+    eve.CMD_TEXT(x+65, y, 21, 0, line);
+
+    eve.COLOR_RGB(255,0,0);
+    sprintf(line, "E2: %s", error_to_str(d->driver2_error));
+    eve.CMD_TEXT(x+65, y + 18, 21, 0, line);
 
     eve.COLOR_RGB(255,255,255);
+    sprintf(line, "CAN: %s", canopen_to_str(d->canopen_state));
+    eve.CMD_TEXT(x, y + 36, 21, 0, line);
+
+    eve.COLOR_RGB(255,255,255);
+
 }
 
 
@@ -209,11 +211,11 @@ void init_dashboard(dashboard_data_t *data)
     data->driver2_dc_voltage = 0;
     data->driver2_dc_current = 0;
 
-    data->driver1_warning = 0;
-    data->driver1_error = 0;
+    data->driver1_warning = NO_WARNING;
+    data->driver1_error = NO_FAULT;
 
-    data->driver2_warning = 0;
-    data->driver2_error = 0;
+    data->driver2_warning = NO_WARNING;
+    data->driver2_error = NO_FAULT;
 
     
     // Buttons and mode
@@ -329,10 +331,10 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
     {
         // título
         // dibujar rejilla 4x4
-        const int cellW = 115;
+        const int cellW = 109;
         const int cellH = 60;
-        int startX = 10;
-        int startY = 10;
+        int startX = 6;
+        int startY = 0;
         eve.COLOR_RGB(255,255,255);
         // helper que maneja negativos mejor que CMD_NUMBER
         auto textInCell = [&](int col,int row,const char* label,float value,const char* unit="", int tag=0){
@@ -345,35 +347,38 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             eve.VERTEX2F((x+cellW)*16, (y+cellH)*16);
             eve.END();
             eve.COLOR_RGB(255,255,255);
-            eve.CMD_TEXT(x+5, y+18, 22, 0, label);
+            eve.CMD_TEXT(x + cellW/2, y + 10, 22, Bridgetek_EVE2::OPT_CENTERX, label);
             // convertir a entero con signo
             int iv = (int) value;
-            char buf[16];
-            sprintf(buf, "%d", iv);
-            eve.CMD_TEXT(x+cellW/2, y+18, 22, 0, buf);
-            if (unit[0]) eve.CMD_TEXT(x+cellW-20, y+18, 22, 0, unit);
+            char buf[24];
+            if (unit[0]) {
+                sprintf(buf, "%d %s", iv, unit);
+            } else {
+                sprintf(buf, "%d", iv);
+            }
+            eve.CMD_TEXT(x + cellW/2, y + 34, 22, Bridgetek_EVE2::OPT_CENTERX, buf);
             eve.TAG(255);
         };
         // columna 0: driver1 + battery volt
-        textInCell(0,0,"DRV1 VDC", d->driver1_dc_voltage, "V", 10);
-        textInCell(0,1,"DRV1 IDC", d->driver1_dc_current, "A", 11);
-        textInCell(0,2,"M1 IAC", d->motor1_ac_current, "A", 12);
-        textInCell(0,3,"M1 T", d->motor1_temp, "C", 13);
+        textInCell(0,0,"DRV1", d->driver1_dc_voltage, "VDC", 10);
+        textInCell(0,1,"DRV1", d->driver1_dc_current, "ADC", 11);
+        textInCell(0,2,"M1", d->motor1_ac_current, "AC", 12);
+        textInCell(0,3,"M1", d->motor1_temp, "C", 13);
         // columna 1: driver2 + battery current
-        textInCell(1,0,"DRV2 VDC", d->driver2_dc_voltage, "V", 14);
-        textInCell(1,1,"DRV2 IDC", d->driver2_dc_current, "A", 15);
-        textInCell(1,2,"M2 IAC", d->motor2_ac_current, "A", 16);
-        textInCell(1,3,"M2 T", d->motor2_temp, "C", 17);
+        textInCell(1,0,"DRV2", d->driver2_dc_voltage, "VDC", 14);
+        textInCell(1,1,"DRV2", d->driver2_dc_current, "ADC", 15);
+        textInCell(1,2,"M2", d->motor2_ac_current, "AC", 16);
+        textInCell(1,3,"M2", d->motor2_temp, "C", 17);
         // columna 2: controles
         textInCell(2,0,"TPS", d->tps, "%", 18);
-        textInCell(2,1,"Steer", d->steering_angle, "deg", 19);
-        textInCell(2,2,"F Brk", d->brake_front, "%", 20);
-        textInCell(2,3,"R Brk", d->brake_rear, "%", 21);
+        textInCell(2,1,"DIR", d->steering_angle, "deg", 19);
+        textInCell(2,2,"FBRK", d->brake_front, "%", 20);
+        textInCell(2,3,"RBRK", d->brake_rear, "%", 21);
         // columna 3: wheel speeds
-        textInCell(3,0,"FL spd", d->wheel_speed_fl, "kmh", 22);
-        textInCell(3,1,"FR spd", d->wheel_speed_fr, "kmh", 23);
-        textInCell(3,2,"RL spd", d->wheel_speed_rl, "kmh", 24);
-        textInCell(3,3,"RR spd", d->wheel_speed_rr, "kmh", 25);
+        textInCell(3,0,"FL", d->wheel_speed_fl, "rpm", 22);
+        textInCell(3,1,"FR", d->wheel_speed_fr, "rpm", 23);
+        textInCell(3,2,"RL", d->wheel_speed_rl, "rpm", 24);
+        textInCell(3,3,"RR", d->wheel_speed_rr, "rpm", 25);
     }
 
     if(current_page == PAGE_GRAPH)
@@ -447,23 +452,23 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         {
             case GRAPH_DRV1_VDC: max_val = 200; history = d->driver1_dc_voltage_history; break;
             case GRAPH_DRV1_IDC: max_val = 200; history = d->driver1_dc_current_history; break;
-            case GRAPH_M1_IAC: max_val = 200; history = d->motor1_ac_current_history; break;
+            case GRAPH_M1_IAC: max_val = 400; history = d->motor1_ac_current_history; break;
             case GRAPH_M1_T: max_val = 80; history = d->motor1_temp_history; break;
 
             case GRAPH_DRV2_VDC: max_val = 200; history = d->driver2_dc_voltage_history; break;
             case GRAPH_DRV2_IDC: max_val = 200; history = d->driver2_dc_current_history; break;
-            case GRAPH_M2_IAC: max_val = 200; history = d->motor2_ac_current_history; break;
+            case GRAPH_M2_IAC: max_val = 400; history = d->motor2_ac_current_history; break;
             case GRAPH_M2_T: max_val = 80; history = d->motor2_temp_history; break;
 
             case GRAPH_TPS: max_val = 100; history = d->tps_history; break;
-            case GRAPH_STEER: max_val = 180; history = d->steering_angle_history; break;
+            case GRAPH_STEER: max_val = 360; history = d->steering_angle_history; break;
             case GRAPH_FRONT_BRK: max_val = 100; history = d->brake_front_history; break;
             case GRAPH_REAR_BRK: max_val = 100; history = d->brake_rear_history; break;
 
-            case GRAPH_FL_SPD: max_val = 300; history = d->wheel_speed_fl_history; break;
-            case GRAPH_FR_SPD: max_val = 300; history = d->wheel_speed_fr_history; break;
-            case GRAPH_RL_SPD: max_val = 300; history = d->wheel_speed_rl_history; break;
-            case GRAPH_RR_SPD: max_val = 300; history = d->wheel_speed_rr_history; break;
+            case GRAPH_FL_SPD: max_val = 10000; history = d->wheel_speed_fl_history; break;
+            case GRAPH_FR_SPD: max_val = 10000; history = d->wheel_speed_fr_history; break;
+            case GRAPH_RL_SPD: max_val = 10000; history = d->wheel_speed_rl_history; break;
+            case GRAPH_RR_SPD: max_val = 10000; history = d->wheel_speed_rr_history; break;
             default: history = nullptr; break;
         }
 

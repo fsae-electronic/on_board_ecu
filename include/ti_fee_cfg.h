@@ -118,7 +118,7 @@
 /* SourceId : HL_Fee_SourceId_24 */
 /* DesignId : HL_FEE_DesignId_15 */
 /* Requirements : HL_FEE_SR77 */
-#define TI_FEE_FLASH_WRITECOUNTER_SAVE                        STD_ON 
+#define TI_FEE_FLASH_WRITECOUNTER_SAVE                        STD_OFF 
 
 /** @def FEE_NUMBER_OF_EEPS
 *   @brief Alias name for FEE EEPS

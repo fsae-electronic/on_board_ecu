@@ -39,13 +39,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <Bridgetek_EVE2.h>
-
-/**
- @brief EVE library handle.
- @details This is the one instance of the EVE library. Available as a global.
- */
-extern Bridgetek_EVE2 eve;
+#include "EVE2.h"
 
 #include "sound.h"
 
@@ -56,34 +50,34 @@ void enableSound(void)
 	uint16_t regGpioxDir;
 
 	// Read GPIOX_DIR register
-	regGpioxDir = eve.LIB_MemRead16(eve.REG_GPIOX_DIR);
+	regGpioxDir = EVE_LIB_MemRead16(EVE_REG_GPIOX_DIR);
 	// Set bit 2 of  GPIO_DIR register  to output (GPIO2)
 	regGpioxDir = regGpioxDir | 0x0004;
 	// Enable GPIO2 as an output
-	eve.LIB_MemWrite16(eve.REG_GPIOX_DIR, regGpioxDir);
+	EVE_LIB_MemWrite16(EVE_REG_GPIOX_DIR, regGpioxDir);
 
 	// Read REG_GPIOX
-	regGpiox = eve.LIB_MemRead16(eve.REG_GPIOX);
+	regGpiox = EVE_LIB_MemRead16(EVE_REG_GPIOX);
 	// Set bit 2 of GPIOX register (GPIO2) high
 	regGpiox = regGpiox | 0x0004;
 	// Enable the GPIO2 signal to the Audio Driver
-	eve.LIB_MemWrite16(eve.REG_GPIOX, regGpiox);
+	EVE_LIB_MemWrite16(EVE_REG_GPIOX, regGpiox);
 
 	// Turn synthesizer volume up
-	eve.LIB_MemWrite8(eve.REG_VOL_SOUND, 255);
+	EVE_LIB_MemWrite8(EVE_REG_VOL_SOUND, 255);
 	// Set synthesizer to mute
-	eve.LIB_MemWrite8(eve.REG_SOUND, 0x60);
+	EVE_LIB_MemWrite8(EVE_REG_SOUND, 0x60);
 	// Play sound
-	eve.LIB_MemWrite8(eve.REG_PLAY, 1);
+	EVE_LIB_MemWrite8(EVE_REG_PLAY, 1);
 
 }
 
 void playSound(uint8_t sound, uint8_t note)
 {
 	// set synthesizer to chime c#3
-	eve.LIB_MemWrite16(eve.REG_SOUND, (note << 8) | sound);
+	EVE_LIB_MemWrite16(EVE_REG_SOUND, (note << 8) | sound);
 	// play sound
-	eve.LIB_MemWrite8(eve.REG_PLAY, 1);
+	EVE_LIB_MemWrite8(EVE_REG_PLAY, 1);
 
 }
 
