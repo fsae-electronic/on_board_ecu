@@ -87,6 +87,13 @@ enum mode_t
     RACE
 };
 
+enum log_level_t
+{
+    LOG_INFO = 0,
+    LOG_WARNING,
+    LOG_FAULT
+};
+
 
 
 typedef struct
@@ -195,5 +202,11 @@ extern int cal_current_sensors_timer;
 void init_dashboard(dashboard_data_t *data);
 void update_dashboard_data(dashboard_data_t *data);
 void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *data);
+
+void dashboard_log_event(uint8_t driver, log_level_t level, const char *message);
+void dashboard_logs_scroll(int delta);
+void dashboard_logs_clear(void);
+bool dashboard_race_overlay_is_active(void);
+void dashboard_race_overlay_acknowledge(void);
 
 #endif // DASHBOARD_H

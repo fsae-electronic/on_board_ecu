@@ -4,8 +4,10 @@
 typedef enum
 {
     PAGE_RACE = 0,
+    PAGE_NORMAL,
     PAGE_TELEMETRY,
     PAGE_DEBUG,
+    PAGE_FAULTS,
     PAGE_GRAPH
 } ui_page_t;
 

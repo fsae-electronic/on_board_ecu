@@ -30,10 +30,6 @@ int main()
     sciInit();
     sciSetBaudrate(sciREG, 115200U);
 
-    // Print initialization message
-    sciSend(sciREG, 64, (uint8_t*)("TMS570 ON-BOARD ECU INITIALIZED\n"));
-
-
     canInit();
     canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
 
@@ -44,14 +40,9 @@ int main()
     connect_input(INPUT_2, &dashboard_data.mode);
     connect_input(INPUT_3, &dashboard_data.telemetry_enabled);
 
-    sciSend(sciREG, 64, (uint8_t*)("CAN initialized\n"));
 
-    sciSend(sciREG, 64, (uint8_t*)("Initializing display...\n"));
     display_data.setup(WQVGA);
     display_data.Init();
-    sciSend(sciREG, 64, (uint8_t*)("Display initialized\n"));
-
-    sciSend(sciREG, 64, (uint8_t*)("Initializing EEPROM...\n"));
 
     rtiInit();
 
@@ -60,7 +51,6 @@ int main()
     {
         TI_Fee_MainFunction();
     }
-    sciSend(sciREG, 64, (uint8_t*)("EEPROM initialized\n"));
 
 
     

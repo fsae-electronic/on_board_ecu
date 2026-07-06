@@ -1,5 +1,6 @@
 #include "ui_touch.h"
 #include "pages.h"
+#include "test_data.h"
 extern "C" {
 #include "ti_fee.h"
 }
@@ -178,29 +179,52 @@ bool eve_get_xy(Bridgetek_EVE2 &eve, uint16_t *x, uint16_t *y)
 void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
 {
     static uint8_t last_key = 0;
-    static bool tracking_swipe = false;
-    static uint16_t swipe_x0 = 0;
-    static uint16_t swipe_y0 = 0;
-    static uint16_t last_x = 0;
-    static uint16_t last_y = 0;
+    static bool touch_active = false;
+
+    bool touch_present = (eve_key_detect(eve) != 0);
+
+    auto go_to_next_page = []() {
+        if (current_page == PAGE_GRAPH) {
+            current_page = PAGE_TELEMETRY;
+            current_graph = GRAPH_NONE;
+            return;
+        }
+
+        int np = (int)current_page + 1;
+        if (np > PAGE_FAULTS) {
+            np = PAGE_RACE;
+        }
+        current_page = (ui_page_t)np;
+
+        if (current_page != PAGE_GRAPH) {
+            current_graph = GRAPH_NONE;
+        }
+    };
+
+    auto go_to_prev_page = []() {
+        if (current_page == PAGE_GRAPH) {
+            current_page = PAGE_TELEMETRY;
+            current_graph = GRAPH_NONE;
+            return;
+        }
+
+        int np = (int)current_page - 1;
+        if (np < PAGE_RACE) {
+            np = PAGE_FAULTS;
+        }
+        current_page = (ui_page_t)np;
+
+        if (current_page != PAGE_GRAPH) {
+            current_graph = GRAPH_NONE;
+        }
+    };
 
     uint8_t key;
-    uint16_t tx, ty;
 
-    if (eve_key_detect(eve)) {
-        // hay contacto; actualizar swipe y tag
-        eve_get_xy(eve, &tx, &ty);
-        last_x = tx;
-        last_y = ty;
-
-        if (!tracking_swipe) {
-            tracking_swipe = true;
-            swipe_x0 = tx;
-            swipe_y0 = ty;
-
-            last_x = tx;
-            last_y = ty;
-            // reproducir pip al inicio del toque
+    if (touch_present) {
+        // reproducir pip al inicio del toque
+        if (!touch_active) {
+            touch_active = true;
             playPip(NOTE_C4);
         }
 
@@ -209,13 +233,32 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
         }
     } else {
         // toque liberado
+        bool had_touch = touch_active;
+        touch_active = false;
+
+        // En RACE, si hay overlay activo (warning/fault), cualquier toque lo cierra.
+        if(had_touch && current_page == PAGE_RACE && dashboard_race_overlay_is_active())
+        {
+            dashboard_race_overlay_acknowledge();
+            last_key = 0;
+            return;
+        }
 
         if (last_key != 0) {
             // acción de botón al soltar
             switch (last_key) {
-                case 1: data->traction_on = !data->traction_on; break;
-                case 2: data->mode = !data->mode; break;
-                case 3: data->drive_enabled = !data->drive_enabled; break;
+                case 1:
+                    data->traction_on = !data->traction_on;
+                    dashboard_log_event(0, LOG_INFO, data->traction_on ? "INPUT Traction ON" : "INPUT Traction OFF");
+                    break;
+                case 2:
+                    data->mode = !data->mode;
+                    dashboard_log_event(0, LOG_INFO, data->mode == RACE ? "INPUT Mode RACE" : "INPUT Mode NORMAL");
+                    break;
+                case 3:
+                    data->drive_enabled = !data->drive_enabled;
+                    dashboard_log_event(0, LOG_INFO, data->drive_enabled ? "INPUT Drive ON" : "INPUT Drive OFF");
+                    break;
 
                 case 10: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV1_VDC; break;
                 case 11: current_page = PAGE_GRAPH; current_graph = GRAPH_DRV1_IDC; break;
@@ -239,36 +282,54 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 40:
                     data->cal_tps_0 = 1;
                     cal_tps_0_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal TPS 0%");
                     break;
 
                 case 41:
                     data->cal_tps_100 = 1;
                     cal_tps_100_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal TPS 100%");
                     break;
 
-                case 42: data->traction_on = !data->traction_on; break;
-                case 43: data->mode = !data->mode; break;
-                case 44: data->drive_enabled = !data->drive_enabled; break;
-                case 45: data->telemetry_enabled = !data->telemetry_enabled; break;
+                case 42:
+                    data->traction_on = !data->traction_on;
+                    dashboard_log_event(0, LOG_INFO, data->traction_on ? "DEBUG Traction ON" : "DEBUG Traction OFF");
+                    break;
+                case 43:
+                    data->mode = !data->mode;
+                    dashboard_log_event(0, LOG_INFO, data->mode == RACE ? "DEBUG Mode RACE" : "DEBUG Mode NORMAL");
+                    break;
+                case 44:
+                    data->drive_enabled = !data->drive_enabled;
+                    dashboard_log_event(0, LOG_INFO, data->drive_enabled ? "DEBUG Drive ON" : "DEBUG Drive OFF");
+                    break;
+                case 45:
+                    data->telemetry_enabled = !data->telemetry_enabled;
+                    dashboard_log_event(0, LOG_INFO, data->telemetry_enabled ? "DEBUG Telemetry ON" : "DEBUG Telemetry OFF");
+                    break;
 
                 case 46:
                     data->cal_left_steer = 1;
                     cal_left_steer_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal LEFT steer");
                     break;
 
                 case 47:
                     data->cal_right_steer = 1;
                     cal_right_steer_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal RIGHT steer");
                     break;
 
                 case 48:
 
                     data->cal_center_steer = 1;
                     cal_center_steer_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal CENTER steer");
                     break;
 
                 case 49:
                     data->cal_screen = 1;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Touch calibration");
                     eve_calibrate(eve);
                     saveCalibration(eve);
                     data->cal_screen = 0;
@@ -277,39 +338,45 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
                 case 50:
                     data->cal_current_sensors = 1;
                     cal_current_sensors_timer = 50;
+                    dashboard_log_event(0, LOG_INFO, "DEBUG Cal current sensors");
                     break;
                 case 51: break;
+
+                case 52:
+                    test_data_toggle();
+                    if(test_data_is_enabled())
+                    {
+                        dashboard_log_event(0, LOG_INFO, "DEBUG Test data ON");
+                    }
+                    else
+                    {
+                        dashboard_log_event(0, LOG_INFO, "DEBUG Test data OFF");
+                        init_dashboard(&dashboard_data);
+                    }
+                    break;
+
+                case 70:
+                    dashboard_logs_scroll(+1);
+                    break;
+
+                case 71:
+                    dashboard_logs_scroll(-1);
+                    break;
+
+                case 72:
+                    dashboard_logs_clear();
+                    break;
+
+                case 90:
+                    go_to_prev_page();
+                    break;
+
+                case 91:
+                    go_to_next_page();
+                    break;
             }
 
             last_key = 0;
-        }
-
-        if (tracking_swipe) {
-
-            int16_t dx = (int16_t)last_x - (int16_t)swipe_x0;
-            int16_t dy = (int16_t)last_y - (int16_t)swipe_y0;
-
-            const int16_t threshold = 60;     // distancia mínima swipe
-            const int16_t max_y_move = 40;    // evita swipe diagonal
-
-            // solo swipe si NO se presionó botón
-            if (last_key == 0 && abs(dx) > threshold && abs(dy) < max_y_move) {
-
-                if (dx > 0) {
-                    // swipe derecha
-                    int np = (int)current_page + 1;
-                    if (np > PAGE_DEBUG) np = PAGE_RACE;
-                    current_page = (ui_page_t)np;
-                }
-                else {
-                    // swipe izquierda
-                    int np = (int)current_page - 1;
-                    if (np < PAGE_RACE) np = PAGE_DEBUG;
-                    current_page = (ui_page_t)np;
-                }
-            }
-
-            tracking_swipe = false;
         }
     }
 }

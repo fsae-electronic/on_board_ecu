@@ -27,6 +27,7 @@ source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_d
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h
+source/data.obj: ../source/test_data.h
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sci.h
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/reg_sci.h
 source/data.obj: G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sys_common.h
@@ -91,6 +92,8 @@ G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/FT81x.h:
 G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/HAL.h:
 
 G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/ft81x_driver/MCU.h:
+
+../source/test_data.h:
 
 G:/Mi\ unidad/ITBA\ -\ Agus/tesis_ecu/code/on_board_ecu/include/sci.h:
 

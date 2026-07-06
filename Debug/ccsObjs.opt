@@ -32,6 +32,7 @@
 "./source/sys_startup.obj"
 "./source/sys_vim.obj"
 "./source/system.obj"
+"./source/test_data.obj"
 "./source/ti_fee_Info.obj"
 "./source/ti_fee_cancel.obj"
 "./source/ti_fee_cfg.obj"
