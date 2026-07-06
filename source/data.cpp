@@ -1,5 +1,6 @@
 #include "data.h"
 #include "dashboard.h"
+#include "test_data.h"
 #include "sci.h"
 
 #include "can.h"
@@ -44,6 +45,12 @@ void update_data(void)
     static uint8_t last_traction_on = 0xFF;
     static uint8_t last_mode = 0xFF;
     static uint8_t last_telemetry_enabled = 0xFF;
+
+    if(test_data_is_enabled())
+    {
+        test_data_update(&dashboard_data);
+        return; // In test mode do not send any CAN message.
+    }
 
     auto send_calibration_cmd = [](uint8_t cmd_id)
     {

@@ -4,6 +4,92 @@ Firmware para la ECU on-board basada en TI TMS570LS1224. El proyecto recibe y tr
 
 El punto de entrada activo es [source/sys_main.cpp](source/sys_main.cpp).
 
+## UI y diagnostico implementado
+
+Resumen de funcionalidades agregadas en el dashboard on-board para visualizacion, diagnostico y pruebas.
+
+### Navegacion de paginas
+
+- Navegacion por flechas izquierda/derecha (sin swipe).
+- Orden actual de paginas: `RACE` -> `NORMAL` -> `TELEMETRY` -> `DEBUG` -> `FAULTS/LOG` -> `RACE`.
+- La pagina `GRAPH` se abre desde `TELEMETRY` y vuelve a `TELEMETRY` con `BACK`.
+
+Referencias: [source/pages.h](source/pages.h), [source/ui_touch.cpp](source/ui_touch.cpp), [source/dashboard.cpp](source/dashboard.cpp).
+
+### Pagina RACE (estilo F1)
+
+- Vista minimal con variables principales grandes:
+	- `rpm`
+	- `battery_voltage`
+	- `battery_current`
+	- `tps`
+	- `brake_front`
+- Se mantiene la barra de RPM superior.
+- Indicador rojo de diferencia de velocidad entre ejes cuando la diferencia relativa front/rear es `>= 20%`.
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp).
+
+### Overlays criticos en RACE
+
+- `WARNING`: franja amarilla con codigo del warning activo y driver.
+- `FAULT`: pantalla roja completa con codigo de error activo y driver.
+- Cierre manual: toque en pantalla para ocultar overlay.
+- Limpieza automatica: si el estado vuelve a `NO_WARNING` o `NO_FAULT`, el overlay se limpia automaticamente.
+- Prioridad visual: `FAULT` tiene prioridad sobre `WARNING`.
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp), [source/ui_touch.cpp](source/ui_touch.cpp).
+
+### Pagina NORMAL (layout clasico)
+
+- Se conserva la vista clasica anterior con bloques de motores, centro y estado.
+- Misma navegacion por flechas que el resto de paginas.
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp).
+
+### Pagina TELEMETRY y graficos
+
+- Grilla 4x4 con variables en tiempo real.
+- Cada celda tiene tag tactil para abrir su grafico historico (`GRAPH`).
+- Variables con acceso a grafico:
+	- Driver 1: VDC, IDC, AC, Temp
+	- Driver 2: VDC, IDC, AC, Temp
+	- Controles: TPS, Steering, Front Brake, Rear Brake
+	- Ruedas: FL, FR, RL, RR
+- En `GRAPH` se muestra curva historica, valor actual y escala.
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp), [source/ui_touch.cpp](source/ui_touch.cpp).
+
+### Pagina FAULTS/LOG
+
+- Log circular en RAM con timestamp relativo por tick de dashboard.
+- Colores por severidad:
+	- `INFO`: gris
+	- `WARNING`: amarillo
+	- `FAULT`: rojo
+- Scroll arriba/abajo y boton `CLR` para limpiar.
+- Se registran transiciones de:
+	- CANopen state
+	- warnings y faults de ambos drivers
+	- acciones de botones de `DEBUG`
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp), [source/ui_touch.cpp](source/ui_touch.cpp).
+
+### Mirror de logs por UART
+
+- Cada evento log tambien se envia por SCI/UART con formato textual:
+	- `[mm:ss.mmm] DRVx LEVEL mensaje`
+
+Referencia: [source/dashboard.cpp](source/dashboard.cpp).
+
+### Modo TEST DATA (simulacion)
+
+- Toggle `TEST DATA ON/OFF` desde `DEBUG`.
+- Genera datos sinteticos para validar UI, graficos, warnings y faults.
+- Mientras `TEST DATA` esta activo, se inhibe TX CAN de comandos desde `update_data()` para no interferir con el sistema real.
+- Al desactivar `TEST DATA`, se reinicia el dashboard con `init_dashboard(...)`.
+
+Referencia: [source/test_data.cpp](source/test_data.cpp), [source/data.cpp](source/data.cpp), [source/ui_touch.cpp](source/ui_touch.cpp), [source/dashboard.cpp](source/dashboard.cpp).
+
 ## CAN
 
 Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del payload en el bus: `b0` es el primer byte y `b7` el ultimo.
