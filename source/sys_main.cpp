@@ -31,7 +31,7 @@ int main()
     sciSetBaudrate(sciREG, 115200U);
 
     canInit();
-    canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
+    //canEnableloopback(canREG1, Internal_Lbk); // Enable loopback mode for testing without actual CAN hardware
 
     init_inputs();
 
