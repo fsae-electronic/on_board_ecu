@@ -722,8 +722,15 @@ void update_dashboard_data(dashboard_data_t *data)
 
 static void draw_navigation_bar(Bridgetek_EVE2 &eve)
 {
-    // Flecha izquierda (tag 90)
+    // Flecha izquierda (tag 90): area tactil invisible ampliada + flecha visible
     eve.TAG(90);
+    eve.COLOR_MASK(0, 0, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(0 * 16, 90 * 16);
+    eve.VERTEX2F(70 * 16, 182 * 16);
+    eve.END();
+    eve.COLOR_MASK(1, 1, 1, 1);
+
     eve.LINE_WIDTH(2 * 16);
     eve.COLOR_RGB(140,140,140);
     eve.BEGIN(eve.BEGIN_LINES);
@@ -733,8 +740,15 @@ static void draw_navigation_bar(Bridgetek_EVE2 &eve)
     eve.VERTEX2F(13 * 16, 143 * 16);
     eve.END();
 
-    // Flecha derecha (tag 91)
+    // Flecha derecha (tag 91): area tactil invisible ampliada + flecha visible
     eve.TAG(91);
+    eve.COLOR_MASK(0, 0, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(410 * 16, 90 * 16);
+    eve.VERTEX2F(480 * 16, 182 * 16);
+    eve.END();
+    eve.COLOR_MASK(1, 1, 1, 1);
+
     eve.LINE_WIDTH(2 * 16);
     eve.BEGIN(eve.BEGIN_LINES);
     eve.VERTEX2F(460 * 16, 136 * 16);
@@ -917,10 +931,10 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
             case GRAPH_FRONT_BRK: max_val = 100; history = d->brake_front_history; break;
             case GRAPH_REAR_BRK: max_val = 100; history = d->brake_rear_history; break;
 
-            case GRAPH_FL_SPD: max_val = 10000; history = d->wheel_speed_fl_history; break;
-            case GRAPH_FR_SPD: max_val = 10000; history = d->wheel_speed_fr_history; break;
-            case GRAPH_RL_SPD: max_val = 10000; history = d->wheel_speed_rl_history; break;
-            case GRAPH_RR_SPD: max_val = 10000; history = d->wheel_speed_rr_history; break;
+            case GRAPH_FL_SPD: max_val = 3000; history = d->wheel_speed_fl_history; break;
+            case GRAPH_FR_SPD: max_val = 3000; history = d->wheel_speed_fr_history; break;
+            case GRAPH_RL_SPD: max_val = 3000; history = d->wheel_speed_rl_history; break;
+            case GRAPH_RR_SPD: max_val = 3000; history = d->wheel_speed_rr_history; break;
             default: history = nullptr; break;
         }
 

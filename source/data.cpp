@@ -55,6 +55,14 @@ void update_data(void)
     auto send_calibration_cmd = [](uint8_t cmd_id)
     {
         calibration_cmd.values.cmd_id = cmd_id;
+        calibration_cmd.values.value = 0;
+        canTransmit(canREG1, canMESSAGE_BOX18, calibration_cmd.raw);
+    };
+
+    auto send_button_cmd = [](uint8_t cmd_id, uint8_t value)
+    {
+        calibration_cmd.values.cmd_id = cmd_id;
+        calibration_cmd.values.value = value;
         canTransmit(canREG1, canMESSAGE_BOX18, calibration_cmd.raw);
     };
 
@@ -71,69 +79,98 @@ void update_data(void)
     if (front_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX2, front_data.raw);
-        dashboard_data.wheel_speed_fl = (float)front_data.values.front_left_speed;
-        dashboard_data.wheel_speed_fr = (float)front_data.values.front_right_speed;
-        dashboard_data.steering_angle = (float)front_data.values.direction; // Assuming direction is in degrees
-        dashboard_data.brake_front = (float)front_data.values.front_brake_pressure;
+        // Reconstruct 16-bit values from raw bytes explicitly (little-endian: LSB first)
+        uint16_t fl_speed = (uint16_t)front_data.raw[0] | ((uint16_t)front_data.raw[1] << 8);
+        uint16_t fr_speed = (uint16_t)front_data.raw[2] | ((uint16_t)front_data.raw[3] << 8);
+        uint16_t direction = (uint16_t)front_data.raw[4] | ((uint16_t)front_data.raw[5] << 8);
+        uint16_t front_brake = (uint16_t)front_data.raw[6] | ((uint16_t)front_data.raw[7] << 8);
+
+        dashboard_data.wheel_speed_fl = (float)fl_speed;
+        dashboard_data.wheel_speed_fr = (float)fr_speed;
+        dashboard_data.steering_angle = (float)direction; // Assuming direction is in degrees
+        dashboard_data.brake_front = (float)front_brake;
         front_data.new_data = false;
     }
     if (current_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX3, current_data.raw);
-        dashboard_data.motor1_ac_current = (float)current_data.values.ac_current_1;
-        dashboard_data.driver1_dc_current = (float)current_data.values.dc_current_1;
-        dashboard_data.motor2_ac_current = (float)current_data.values.ac_current_2;
-        dashboard_data.driver2_dc_current = (float)current_data.values.dc_current_2;
+        // Reconstruct 16-bit currents (little-endian LSB first)
+        uint16_t ac1 = (uint16_t)current_data.raw[0] | ((uint16_t)current_data.raw[1] << 8);
+        uint16_t ac2 = (uint16_t)current_data.raw[2] | ((uint16_t)current_data.raw[3] << 8);
+        uint16_t dc1 = (uint16_t)current_data.raw[4] | ((uint16_t)current_data.raw[5] << 8);
+        uint16_t dc2 = (uint16_t)current_data.raw[6] | ((uint16_t)current_data.raw[7] << 8);
+
+        dashboard_data.motor1_ac_current = (float)ac1;
+        dashboard_data.driver1_dc_current = (float)dc1;
+        dashboard_data.motor2_ac_current = (float)ac2;
+        dashboard_data.driver2_dc_current = (float)dc2;
         current_data.new_data = false;
     }
     if (rear_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX4, rear_data.raw);
-        dashboard_data.brake_rear = (float)rear_data.values.rear_brake_pressure;
+        uint16_t rear_brake = (uint16_t)rear_data.raw[0] | ((uint16_t)rear_data.raw[1] << 8);
+        dashboard_data.brake_rear = (float)rear_brake;
         rear_data.new_data = false;
     }
     if (driver1_status.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX5, driver1_status.raw);
-        dashboard_data.driver1_warning = driver1_status.values.warning;
-        dashboard_data.driver1_error = driver1_status.values.error;
+        uint16_t warn1 = (uint16_t)driver1_status.raw[2] | ((uint16_t)driver1_status.raw[3] << 8);
+        uint16_t err1  = (uint16_t)driver1_status.raw[4] | ((uint16_t)driver1_status.raw[5] << 8);
+        dashboard_data.driver1_warning = warn1;
+        dashboard_data.driver1_error = err1;
         driver1_status.new_data = false;
     }
     if (driver2_status.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX6, driver2_status.raw);
-        dashboard_data.driver2_warning = driver2_status.values.warning;
-        dashboard_data.driver2_error = driver2_status.values.error;
+        uint16_t warn2 = (uint16_t)driver2_status.raw[2] | ((uint16_t)driver2_status.raw[3] << 8);
+        uint16_t err2  = (uint16_t)driver2_status.raw[4] | ((uint16_t)driver2_status.raw[5] << 8);
+        dashboard_data.driver2_warning = warn2;
+        dashboard_data.driver2_error = err2;
         driver2_status.new_data = false;
     }
     if (motor1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX7, motor1_data.raw);
-        dashboard_data.wheel_speed_rl = (float)motor1_data.values.motor_velocity; // Assuming motor velocity can be used to calculate rear wheel speed
-        dashboard_data.motor1_rated_current = (float)motor1_data.values.motor_rated_current;
-        dashboard_data.motor1_temp = (float)motor1_data.values.motor_temp;
+        uint16_t mv1 = (uint16_t)motor1_data.raw[0] | ((uint16_t)motor1_data.raw[1] << 8);
+        uint16_t mrc1 = (uint16_t)motor1_data.raw[2] | ((uint16_t)motor1_data.raw[3] << 8);
+        uint8_t mtemp1 = motor1_data.raw[4];
+
+        dashboard_data.wheel_speed_rl = (float)mv1; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.motor1_rated_current = (float)mrc1;
+        dashboard_data.motor1_temp = (float)mtemp1;
         motor1_data.new_data = false;
     }
     if (motor2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX8, motor2_data.raw);
-        dashboard_data.wheel_speed_rr = (float)motor2_data.values.motor_velocity; // Assuming motor velocity can be used to calculate rear wheel speed
-        dashboard_data.motor2_rated_current = (float)motor2_data.values.motor_rated_current;
-        dashboard_data.motor2_temp = (float)motor2_data.values.motor_temp;
+        uint16_t mv2 = (uint16_t)motor2_data.raw[0] | ((uint16_t)motor2_data.raw[1] << 8);
+        uint16_t mrc2 = (uint16_t)motor2_data.raw[2] | ((uint16_t)motor2_data.raw[3] << 8);
+        uint8_t mtemp2 = motor2_data.raw[4];
+
+        dashboard_data.wheel_speed_rr = (float)mv2; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.motor2_rated_current = (float)mrc2;
+        dashboard_data.motor2_temp = (float)mtemp2;
         motor2_data.new_data = false;
     }
     if (driver1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX9, driver1_data.raw);
-        dashboard_data.driver1_temp = (float)driver1_data.values.driver_temp;
-        dashboard_data.driver1_dc_voltage = (float)driver1_data.values.driver_dc_voltage;
+        uint8_t d1temp = driver1_data.raw[0];
+        uint16_t d1volt = (uint16_t)driver1_data.raw[1] | ((uint16_t)driver1_data.raw[2] << 8);
+        dashboard_data.driver1_temp = (float)d1temp;
+        dashboard_data.driver1_dc_voltage = (float)d1volt;
         driver1_data.new_data = false;
     }
     if (driver2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX10, driver2_data.raw);
-        dashboard_data.driver2_temp = (float)driver2_data.values.driver_temp;
-        dashboard_data.driver2_dc_voltage = (float)driver2_data.values.driver_dc_voltage;
+        uint8_t d2temp = driver2_data.raw[0];
+        uint16_t d2volt = (uint16_t)driver2_data.raw[1] | ((uint16_t)driver2_data.raw[2] << 8);
+        dashboard_data.driver2_temp = (float)d2temp;
+        dashboard_data.driver2_dc_voltage = (float)d2volt;
         driver2_data.new_data = false;
     }
     if (main_ecu_data.new_data)
@@ -170,11 +207,31 @@ void update_data(void)
         (buttons_data.values.telemetry_enabled != last_telemetry_enabled))
     {
         canTransmit(canREG1, canMESSAGE_BOX17, buttons_data.raw);
-        last_drive_enabled = buttons_data.values.drive_enabled;
-        last_traction_on = buttons_data.values.traction_on;
-        last_mode = buttons_data.values.mode;
-        last_telemetry_enabled = buttons_data.values.telemetry_enabled;
     }
+
+    // Send individual 0x600 calibration-style messages (byte[0] = cmd_id, byte[1] = value)
+    // on button state changes, one message per changed value.
+    if (buttons_data.values.drive_enabled != last_drive_enabled)
+    {
+        send_button_cmd(CAL_CMD_DRIVE_ENABLE, buttons_data.values.drive_enabled);
+    }
+    if (buttons_data.values.traction_on != last_traction_on)
+    {
+        send_button_cmd(CAL_CMD_TRACTION_ON, buttons_data.values.traction_on);
+    }
+    if (buttons_data.values.mode != last_mode)
+    {
+        send_button_cmd(CAL_CMD_MODE, buttons_data.values.mode);
+    }
+    if (buttons_data.values.telemetry_enabled != last_telemetry_enabled)
+    {
+        send_button_cmd(CAL_CMD_TELEMETRY_ENABLE, buttons_data.values.telemetry_enabled);
+    }
+
+    last_drive_enabled = buttons_data.values.drive_enabled;
+    last_traction_on = buttons_data.values.traction_on;
+    last_mode = buttons_data.values.mode;
+    last_telemetry_enabled = buttons_data.values.telemetry_enabled;
 
     if (dashboard_data.cal_tps_0 && !last_cal_tps_0)
     {

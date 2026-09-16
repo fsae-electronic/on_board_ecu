@@ -136,21 +136,22 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | CAN ID | Estructura | Bytes |
 | --- | --- | --- |
 | `0x402` | `buttons_data_t` | `b0 = drive_enabled`, `b1 = traction_on`, `b2 = mode`, `b3 = telemetry_enabled`, `b4-b7 = libre` |
-| `0x600` | `calibration_cmd_t` | `b0 = cmd_id`, `b1-b7 = libre` |
+| `0x600` | `calibration_cmd_t` | `b0 = cmd_id`, `b1 = value`, `b2-b7 = libre` |
 
 ### Frame de calibracion (ID `0x600`)
 
-Condicion de seguridad:
-solo se envian comandos de calibracion cuando CANopen esta en `Pre-operational` (`0x7F`).
-
-| `cmd_id` | Accion |
-| ---: | --- |
-| `1` | `cal_tps_0` |
-| `2` | `cal_tps_100` |
-| `3` | `cal_left_steer` |
-| `4` | `cal_center_steer` |
-| `5` | `cal_right_steer` |
-| `6` | `cal_current_sensors` |
+| `cmd_id` | Accion | `value` |
+| ---: | --- | --- |
+| `1` | `cal_tps_0` | - |
+| `2` | `cal_tps_100` | - |
+| `3` | `cal_left_steer` | - |
+| `4` | `cal_center_steer` | - |
+| `5` | `cal_right_steer` | - |
+| `6` | `cal_current_sensors` | - |
+| `7` | `drive_enabled` | `0` = off, `1` = on |
+| `8` | `traction_on` | `0` = off, `1` = on |
+| `9` | `mode` | `0` = normal, `1` = race |
+| `0xA` | `telemetry_enabled` | `0` = off, `1` = on |
 
 ### CANopen heartbeat (ID `0x700`)
 
@@ -171,7 +172,7 @@ solo se envian comandos de calibracion cuando CANopen esta en `Pre-operational` 
 - `driver_data_t`: temperatura y tension del driver.
 - `main_ecu_data_t`: estado interno del sistema.
 - `buttons_data_t`: botones que publica el on-board ECU en `0x402`.
-- `calibration_cmd_t`: comando de calibracion por `cmd_id` (TX en `0x600`).
+- `calibration_cmd_t`: comando de calibracion o cambio de estado de boton/modo por `cmd_id` + `value` (TX en `0x600`).
 
 ## Warnings y errores
 

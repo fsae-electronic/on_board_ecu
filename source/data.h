@@ -40,7 +40,11 @@ enum calibration_cmd_id_t
     CAL_CMD_LEFT_STEER = 3,
     CAL_CMD_CENTER_STEER = 4,
     CAL_CMD_RIGHT_STEER = 5,
-    CAL_CMD_CURRENT_SENSORS = 6
+    CAL_CMD_CURRENT_SENSORS = 6,
+    CAL_CMD_DRIVE_ENABLE = 7,      // value: 0 = off, 1 = on
+    CAL_CMD_TRACTION_ON = 8,       // value: 0 = off, 1 = on
+    CAL_CMD_MODE = 0x9,            // value: 0 = normal, 1 = race
+    CAL_CMD_TELEMETRY_ENABLE = 0xA // value: 0 = off, 1 = on
 };
 
 
@@ -226,6 +230,7 @@ struct calibration_cmd_t
         struct
         {
             uint8_t cmd_id;
+            uint8_t value; // used by CAL_CMD_DRIVE_ENABLE/TRACTION_ON/MODE/TELEMETRY_ENABLE
         } values;
     };
     volatile bool new_data;
