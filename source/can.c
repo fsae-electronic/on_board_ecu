@@ -426,7 +426,7 @@ void canInit(void)
 
     canREG1->IF2MSK  = 0xC0000000U | (uint32)((uint32)((uint32)0x000007FFU & (uint32)0x1FFFFFFFU) << (uint32)0U);
     canREG1->IF2ARB  = (uint32)0x80000000U | (uint32)0x40000000U | (uint32)0x20000000U | (uint32)((uint32)((uint32)0x600U & (uint32)0x1FFFFFFFU) << (uint32)0U);
-    canREG1->IF2MCTL = 0x00001000U | (uint32)0x00000000U | (uint32)0x00000000U | (uint32)0x00000000U | (uint32)2U;
+    canREG1->IF2MCTL = 0x00001000U | (uint32)0x00000000U | (uint32)0x00000000U | (uint32)0x00000000U | (uint32)1U;
     canREG1->IF2CMD  = (uint8) 0xF8U;
     canREG1->IF2NO   = 18U;
 
@@ -461,7 +461,7 @@ void canInit(void)
                    (uint32)((uint32)(1U - 1U) << 12U) |
                    (uint32)((uint32)((7U + 1U) - 1U) << 8U) |
                    (uint32)((uint32)(1U - 1U) << 6U) |
-                   (uint32)7U;
+                   (uint32)2U;
 
 
      /** - CAN1 Port output values */
