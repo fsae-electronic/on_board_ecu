@@ -144,9 +144,8 @@ struct motor_data_t
         uint8_t raw[8];
         struct
         {
-            uint16_t motor_velocity; // Motor velocity in RPM
-            uint16_t motor_rated_current;
-            uint8_t motor_temp;
+            int32_t motor_velocity; // Motor velocity in RPM
+            uint32_t motor_rated_current;
         } values;
     };
     volatile bool new_data;
@@ -166,6 +165,7 @@ struct driver_data_t
         {
             uint8_t driver_temp; // Driver temperature
             uint16_t driver_dc_voltage; // Driver voltage
+            uint8_t motor_temp;
         } values;
     };
     volatile bool new_data;
