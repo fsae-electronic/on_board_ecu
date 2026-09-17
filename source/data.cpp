@@ -118,7 +118,7 @@ void update_data(void)
         canGetData(canREG1, canMESSAGE_BOX5, driver1_status.raw);
         uint16_t warn1 = (uint16_t)driver1_status.raw[2] | ((uint16_t)driver1_status.raw[3] << 8);
         uint16_t err1  = (uint16_t)driver1_status.raw[4] | ((uint16_t)driver1_status.raw[5] << 8);
-        dashboard_data.driver1_warning = warn1;
+        dashboard_data.driver1_warning = (warn1 == 0U) ? NO_WARNING : (uint8_t)warn1;
         dashboard_data.driver1_error = err1;
         driver1_status.new_data = false;
     }
@@ -127,32 +127,28 @@ void update_data(void)
         canGetData(canREG1, canMESSAGE_BOX6, driver2_status.raw);
         uint16_t warn2 = (uint16_t)driver2_status.raw[2] | ((uint16_t)driver2_status.raw[3] << 8);
         uint16_t err2  = (uint16_t)driver2_status.raw[4] | ((uint16_t)driver2_status.raw[5] << 8);
-        dashboard_data.driver2_warning = warn2;
+        dashboard_data.driver2_warning = (warn2 == 0U) ? NO_WARNING : (uint8_t)warn2;
         dashboard_data.driver2_error = err2;
         driver2_status.new_data = false;
     }
     if (motor1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX7, motor1_data.raw);
-        uint16_t mv1 = (uint16_t)motor1_data.raw[0] | ((uint16_t)motor1_data.raw[1] << 8);
-        uint16_t mrc1 = (uint16_t)motor1_data.raw[2] | ((uint16_t)motor1_data.raw[3] << 8);
-        uint8_t mtemp1 = motor1_data.raw[4];
+        int32_t mv1 = (int32_t)motor1_data.raw[0] | ((int32_t)motor1_data.raw[1] << 8) | ((int32_t)motor1_data.raw[2] << 16) | ((int32_t)motor1_data.raw[3] << 24);
+        uint32_t mrc1 = (uint32_t)motor1_data.raw[4] | ((uint32_t)motor1_data.raw[5] << 8) | ((uint32_t)motor1_data.raw[6] << 16) | ((uint32_t)motor1_data.raw[7] << 24);
 
-        dashboard_data.wheel_speed_rl = (float)mv1; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.wheel_speed_rl = (-1.0f)*(float)mv1; // Assuming motor velocity can be used to calculate rear wheel speed
         dashboard_data.motor1_rated_current = (float)mrc1;
-        dashboard_data.motor1_temp = (float)mtemp1;
         motor1_data.new_data = false;
     }
     if (motor2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX8, motor2_data.raw);
-        uint16_t mv2 = (uint16_t)motor2_data.raw[0] | ((uint16_t)motor2_data.raw[1] << 8);
-        uint16_t mrc2 = (uint16_t)motor2_data.raw[2] | ((uint16_t)motor2_data.raw[3] << 8);
-        uint8_t mtemp2 = motor2_data.raw[4];
+        int32_t mv2 = (int32_t)motor2_data.raw[0] | ((int32_t)motor2_data.raw[1] << 8) | ((int32_t)motor2_data.raw[2] << 16) | ((int32_t)motor2_data.raw[3] << 24);
+        uint32_t mrc2 = (uint32_t)motor2_data.raw[4] | ((uint32_t)motor2_data.raw[5] << 8) | ((uint32_t)motor2_data.raw[6] << 16) | ((uint32_t)motor2_data.raw[7] << 24);
 
-        dashboard_data.wheel_speed_rr = (float)mv2; // Assuming motor velocity can be used to calculate rear wheel speed
+        dashboard_data.wheel_speed_rr = (-1.0f)*(float)mv2; // Assuming motor velocity can be used to calculate rear wheel speed
         dashboard_data.motor2_rated_current = (float)mrc2;
-        dashboard_data.motor2_temp = (float)mtemp2;
         motor2_data.new_data = false;
     }
     if (driver1_data.new_data)
@@ -160,8 +156,10 @@ void update_data(void)
         canGetData(canREG1, canMESSAGE_BOX9, driver1_data.raw);
         uint8_t d1temp = driver1_data.raw[0];
         uint16_t d1volt = (uint16_t)driver1_data.raw[1] | ((uint16_t)driver1_data.raw[2] << 8);
+        uint8_t m1temp = driver1_data.raw[3];
         dashboard_data.driver1_temp = (float)d1temp;
-        dashboard_data.driver1_dc_voltage = (float)d1volt;
+        dashboard_data.driver1_dc_voltage = (float)d1volt/10.0f;
+        dashboard_data.motor1_temp = (float)m1temp;
         driver1_data.new_data = false;
     }
     if (driver2_data.new_data)
@@ -169,8 +167,10 @@ void update_data(void)
         canGetData(canREG1, canMESSAGE_BOX10, driver2_data.raw);
         uint8_t d2temp = driver2_data.raw[0];
         uint16_t d2volt = (uint16_t)driver2_data.raw[1] | ((uint16_t)driver2_data.raw[2] << 8);
+        uint8_t m2temp = driver2_data.raw[3];
         dashboard_data.driver2_temp = (float)d2temp;
-        dashboard_data.driver2_dc_voltage = (float)d2volt;
+        dashboard_data.driver2_dc_voltage = (float)d2volt/10.0f;
+        dashboard_data.motor2_temp = (float)m2temp;
         driver2_data.new_data = false;
     }
     if (main_ecu_data.new_data)
@@ -226,6 +226,40 @@ void update_data(void)
     if (buttons_data.values.telemetry_enabled != last_telemetry_enabled)
     {
         send_button_cmd(CAL_CMD_TELEMETRY_ENABLE, buttons_data.values.telemetry_enabled);
+    }
+
+    // One-shot message on message box 13 (CAN ID 0x000) when drive_enabled toggles.
+    static uint8_t drive_enable_msg[2] = {0};
+    if (buttons_data.values.drive_enabled && !last_drive_enabled)
+    {
+        // // Enter pre operational state
+        // drive_enable_msg[0] = 0x80;
+        // drive_enable_msg[1] = 0x01;
+        // canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
+        // drive_enable_msg[0] = 0x80;
+        // drive_enable_msg[1] = 0x02;
+        // canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
+
+        // Enter operational state
+        drive_enable_msg[0] = 0x01;
+        drive_enable_msg[1] = 0x01;
+        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg); 
+
+        // delay
+        for (volatile int i = 0; i < 100000; ++i); // simple delay loop
+        
+        drive_enable_msg[0] = 0x01;
+        drive_enable_msg[1] = 0x02;
+        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
+    }
+    else if (!buttons_data.values.drive_enabled && last_drive_enabled)
+    {
+        // TODO: fill drive_enable_msg with the desired payload for the 1->0 transition
+        drive_enable_msg[0] = 0x02;
+        drive_enable_msg[1] = 0x01;
+        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
+        drive_enable_msg[1] = 0x02;
+        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
     }
 
     last_drive_enabled = buttons_data.values.drive_enabled;

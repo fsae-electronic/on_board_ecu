@@ -52,6 +52,14 @@ static race_overlay_t s_race_overlay = RACE_OVERLAY_NONE;
 static uint8_t s_overlay_driver = 0;
 static uint8_t s_overlay_code = 0;
 
+// Remembers the last dismissed fault/warning so it stays hidden until it clears or a different one appears.
+static bool s_fault_acked = false;
+static uint8_t s_acked_fault_driver = 0;
+static uint8_t s_acked_fault_code = 0;
+static bool s_warn_acked = false;
+static uint8_t s_acked_warn_driver = 0;
+static uint8_t s_acked_warn_code = 0;
+
 static const char *warning_to_str(uint8_t warning)
 {
     switch(warning)
@@ -64,7 +72,7 @@ static const char *warning_to_str(uint8_t warning)
         case STALL_PROTECTION: return "STALL";
         case MAX_VELOCITY_EXCEEDED: return "MAX_VEL";
         case BMS_PROPOSED_POWER: return "BMS_LIM";
-        default: return "WARN_UNK";
+        // default: return "WARN_UNK";
     }
 }
 
@@ -90,7 +98,7 @@ static const char *error_to_str(uint8_t error)
         case ERROR_APP_ERROR: return "APP_ERR";
         case ERROR_STO_ERROR: return "STO_ERR";
         case ERROR_CONTROLLER_OVERTEMPERATURE: return "CTRL_TEMP";
-        default: return "ERR_UNK";
+        // default: return "ERR_UNK";
     }
 }
 
@@ -147,6 +155,18 @@ bool dashboard_race_overlay_is_active(void)
 
 void dashboard_race_overlay_acknowledge(void)
 {
+    if(s_race_overlay == RACE_OVERLAY_FAULT)
+    {
+        s_fault_acked = true;
+        s_acked_fault_driver = s_overlay_driver;
+        s_acked_fault_code = s_overlay_code;
+    }
+    else if(s_race_overlay == RACE_OVERLAY_WARNING)
+    {
+        s_warn_acked = true;
+        s_acked_warn_driver = s_overlay_driver;
+        s_acked_warn_code = s_overlay_code;
+    }
     s_race_overlay = RACE_OVERLAY_NONE;
     s_overlay_driver = 0;
     s_overlay_code = 0;
@@ -809,21 +829,34 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         bool has_fault = race_find_fault(d, &fault_driver, &fault_code);
         bool has_warning = race_find_warning(d, &warn_driver, &warn_code);
 
-        if(has_fault)
+        if(!has_fault)
+        {
+            s_fault_acked = false;
+        }
+        if(!has_warning)
+        {
+            s_warn_acked = false;
+        }
+
+        if(has_fault && !(s_fault_acked && s_acked_fault_driver == fault_driver && s_acked_fault_code == fault_code))
         {
             s_race_overlay = RACE_OVERLAY_FAULT;
             s_overlay_driver = fault_driver;
             s_overlay_code = fault_code;
         }
-        else if(has_warning)
+        else if(has_warning && !(s_warn_acked && s_acked_warn_driver == warn_driver && s_acked_warn_code == warn_code))
         {
             s_race_overlay = RACE_OVERLAY_WARNING;
             s_overlay_driver = warn_driver;
             s_overlay_code = warn_code;
         }
-        else
+        else if(!has_fault && !has_warning)
         {
             dashboard_race_overlay_acknowledge();
+        }
+        else
+        {
+            s_race_overlay = RACE_OVERLAY_NONE;
         }
 
         if(s_race_overlay == RACE_OVERLAY_FAULT)
