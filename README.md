@@ -43,6 +43,7 @@ Referencia: [source/dashboard.cpp](source/dashboard.cpp), [source/ui_touch.cpp](
 
 - Se conserva la vista clasica anterior con bloques de motores, centro y estado.
 - Misma navegacion por flechas que el resto de paginas.
+- Barras de presion de freno (front/rear) con escala `0-300`.
 
 Referencia: [source/dashboard.cpp](source/dashboard.cpp).
 
@@ -148,10 +149,14 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `4` | `cal_center_steer` | - |
 | `5` | `cal_right_steer` | - |
 | `6` | `cal_current_sensors` | - |
-| `7` | `drive_enabled` | `0` = off, `1` = on |
-| `8` | `traction_on` | `0` = off, `1` = on |
-| `9` | `mode` | `0` = normal, `1` = race |
-| `0xA` | `telemetry_enabled` | `0` = off, `1` = on |
+| `7` | `drive_enable` on | - |
+| `8` | `drive_enable` off | - |
+| `9` | `traction` on | - |
+| `0xA` | `traction` off | - |
+| `0xB` | `mode` normal | - |
+| `0xC` | `mode` race | - |
+| `0xD` | `telemetry` enable | - |
+| `0xE` | `telemetry` disable | - |
 
 ### CANopen heartbeat (ID `0x700`)
 

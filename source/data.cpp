@@ -59,13 +59,6 @@ void update_data(void)
         canTransmit(canREG1, canMESSAGE_BOX18, calibration_cmd.raw);
     };
 
-    auto send_button_cmd = [](uint8_t cmd_id, uint8_t value)
-    {
-        calibration_cmd.values.cmd_id = cmd_id;
-        calibration_cmd.values.value = value;
-        canTransmit(canREG1, canMESSAGE_BOX18, calibration_cmd.raw);
-    };
-
     // This function can be used to perform any periodic updates or checks for the drivers if needed
     // Send data of buttons status to dashboard
     if (tps_data.new_data)
@@ -209,23 +202,23 @@ void update_data(void)
         canTransmit(canREG1, canMESSAGE_BOX17, buttons_data.raw);
     }
 
-    // Send individual 0x600 calibration-style messages (byte[0] = cmd_id, byte[1] = value)
-    // on button state changes, one message per changed value.
+    // Send individual 0x600 calibration-style messages (byte[0] = cmd_id, byte[1] = 0)
+    // on button state changes, one dedicated cmd_id per action.
     if (buttons_data.values.drive_enabled != last_drive_enabled)
     {
-        send_button_cmd(CAL_CMD_DRIVE_ENABLE, buttons_data.values.drive_enabled);
+        send_calibration_cmd(buttons_data.values.drive_enabled ? CAL_CMD_DRIVE_ENABLE_ON : CAL_CMD_DRIVE_ENABLE_OFF);
     }
     if (buttons_data.values.traction_on != last_traction_on)
     {
-        send_button_cmd(CAL_CMD_TRACTION_ON, buttons_data.values.traction_on);
+        send_calibration_cmd(buttons_data.values.traction_on ? CAL_CMD_TRACTION_ON : CAL_CMD_TRACTION_OFF);
     }
     if (buttons_data.values.mode != last_mode)
     {
-        send_button_cmd(CAL_CMD_MODE, buttons_data.values.mode);
+        send_calibration_cmd(buttons_data.values.mode ? CAL_CMD_MODE_RACE : CAL_CMD_MODE_NORMAL);
     }
     if (buttons_data.values.telemetry_enabled != last_telemetry_enabled)
     {
-        send_button_cmd(CAL_CMD_TELEMETRY_ENABLE, buttons_data.values.telemetry_enabled);
+        send_calibration_cmd(buttons_data.values.telemetry_enabled ? CAL_CMD_TELEMETRY_ENABLE : CAL_CMD_TELEMETRY_DISABLE);
     }
 
     // One-shot message on message box 13 (CAN ID 0x000) when drive_enabled toggles.

@@ -320,11 +320,11 @@ void draw_center(Bridgetek_EVE2 &eve, dashboard_data_t *d)
 
     eve.CMD_TEXT(x,130,26,0,"FRONT BREAK");
     eve.CMD_NUMBER(x+100,130,26,0,d->brake_front);
-    eve.CMD_PROGRESS(x,150,100,15,0,d->brake_front,100);
+    eve.CMD_PROGRESS(x,150,100,15,0,d->brake_front,300);
 
     eve.CMD_TEXT(x,180,26,0,"REAR BREAK");
     eve.CMD_NUMBER(x+100,180,26,0,d->brake_rear);
-    eve.CMD_PROGRESS(x,200,100,15,0,d->brake_rear,100);
+    eve.CMD_PROGRESS(x,200,100,15,0,d->brake_rear,300);
 }
 
 void draw_status(Bridgetek_EVE2 &eve, dashboard_data_t *d)
