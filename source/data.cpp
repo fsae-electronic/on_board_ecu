@@ -64,8 +64,12 @@ void update_data(void)
     if (tps_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX1, tps_data.raw);
-        dashboard_data.tps_1 = (float)tps_data.values.tps_1;
-        dashboard_data.tps_2 = (float)tps_data.values.tps_2;
+
+        uint16_t tps_1 = (uint16_t)tps_data.raw[0] | ((uint16_t)tps_data.raw[1] << 8);
+        uint16_t tps_2 = (uint16_t)tps_data.raw[2] | ((uint16_t)tps_data.raw[3] << 8);
+
+        dashboard_data.tps_1 = (float)tps_1;
+        dashboard_data.tps_2 = (float)tps_2;
         dashboard_data.tps = (dashboard_data.tps_1 + dashboard_data.tps_2) / 2.0f; // Average of both TPS sensors
         tps_data.new_data = false;
     }
@@ -221,39 +225,6 @@ void update_data(void)
         send_calibration_cmd(buttons_data.values.telemetry_enabled ? CAL_CMD_TELEMETRY_ENABLE : CAL_CMD_TELEMETRY_DISABLE);
     }
 
-    // One-shot message on message box 13 (CAN ID 0x000) when drive_enabled toggles.
-    static uint8_t drive_enable_msg[2] = {0};
-    if (buttons_data.values.drive_enabled && !last_drive_enabled)
-    {
-        // // Enter pre operational state
-        // drive_enable_msg[0] = 0x80;
-        // drive_enable_msg[1] = 0x01;
-        // canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
-        // drive_enable_msg[0] = 0x80;
-        // drive_enable_msg[1] = 0x02;
-        // canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
-
-        // Enter operational state
-        drive_enable_msg[0] = 0x01;
-        drive_enable_msg[1] = 0x01;
-        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg); 
-
-        // delay
-        for (volatile int i = 0; i < 100000; ++i); // simple delay loop
-        
-        drive_enable_msg[0] = 0x01;
-        drive_enable_msg[1] = 0x02;
-        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
-    }
-    else if (!buttons_data.values.drive_enabled && last_drive_enabled)
-    {
-        // TODO: fill drive_enable_msg with the desired payload for the 1->0 transition
-        drive_enable_msg[0] = 0x02;
-        drive_enable_msg[1] = 0x01;
-        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
-        drive_enable_msg[1] = 0x02;
-        canTransmit(canREG1, canMESSAGE_BOX13, drive_enable_msg);
-    }
 
     last_drive_enabled = buttons_data.values.drive_enabled;
     last_traction_on = buttons_data.values.traction_on;

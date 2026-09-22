@@ -26,7 +26,6 @@ Bridgetek_EVE2 display_data;
 static void show_logo_splash(Bridgetek_EVE2 &eve)
 {
     const uint32_t linestride = (LOGO_WIDTH + 7U) / 8U;
-    const uint32_t frame_ticks = CLOCK_RTI_HZ / 30U;
     const uint32_t splash_ticks =
         (uint32_t)LOGO_SPLASH_SECONDS * CLOCK_RTI_HZ;
 
@@ -36,74 +35,56 @@ static void show_logo_splash(Bridgetek_EVE2 &eve)
         eve.RAM_G
     );
 
+    int16_t x = (int16_t)((eve.DISP_WIDTH() - LOGO_WIDTH) / 2);
+    int16_t y = (int16_t)((eve.DISP_HEIGHT() - LOGO_HEIGHT) / 2);
+
+    eve.LIB_BeginCoProList();
+    eve.CMD_DLSTART();
+
+    eve.CLEAR_COLOR_RGB(0, 0, 0);
+    eve.CLEAR(1, 1, 1);
+
+    eve.COLOR_RGB(255, 255, 255);
+    eve.BITMAP_HANDLE(0);
+    eve.BITMAP_SOURCE(eve.RAM_G);
+    eve.BITMAP_LAYOUT(eve.FORMAT_L1, linestride, LOGO_HEIGHT);
+
+    eve.BITMAP_SIZE(
+        1,
+        0,
+        0,
+        LOGO_WIDTH,
+        LOGO_HEIGHT
+    );
+
+    eve.BEGIN(eve.BEGIN_BITMAPS);
+    eve.VERTEX2F(x * 16, y * 16);
+    eve.END();
+
+    eve.DISPLAY();
+    eve.CMD_SWAP();
+
+    eve.LIB_EndCoProList();
+    eve.LIB_AwaitCoProEmpty();
+
     rtiResetCounter(rtiCOUNTER_BLOCK0);
     rtiStartCounter(rtiCOUNTER_BLOCK0);
 
-    uint32_t next_frame = 0;
-
-    while(rtiREG1->CNT[0].FRCx < splash_ticks)
-    {
-        uint32_t elapsed = rtiREG1->CNT[0].FRCx;
-
-        if(elapsed < next_frame)
-        {
-            continue;
-        }
-
-        next_frame += frame_ticks;
-
-        float progress = (float)elapsed / (float)splash_ticks;
-
-        if(progress > 1.0f)
-        {
-            progress = 1.0f;
-        }
-
-        // Ease-out: empieza rápido y termina suavemente.
-        float inverse = 1.0f - progress;
-        float eased = 1.0f - inverse * inverse;
-
-        const float start_scale = 0.70f;
-        float scale = start_scale +
-                      (1.0f - start_scale) * eased;
-
-        uint16_t width = (uint16_t)(LOGO_WIDTH * scale);
-        uint16_t height = (uint16_t)(LOGO_HEIGHT * scale);
-
-        int16_t x = (int16_t)((eve.DISP_WIDTH() - width) / 2);
-        int16_t y = (int16_t)((eve.DISP_HEIGHT() - height) / 2);
-
-        eve.LIB_BeginCoProList();
-        eve.CMD_DLSTART();
-
-        eve.CLEAR_COLOR_RGB(0, 0, 0);
-        eve.CLEAR(1, 1, 1);
-
-        eve.COLOR_RGB(255, 255, 255);
-        eve.BITMAP_HANDLE(0);
-        eve.BITMAP_SOURCE(eve.RAM_G);
-        eve.BITMAP_LAYOUT(eve.FORMAT_L1, linestride, LOGO_HEIGHT);
-
-        eve.BITMAP_SIZE(
-            1,
-            0,
-            0,
-            width,
-            height
-        );
-
-        eve.BEGIN(eve.BEGIN_BITMAPS);
-        eve.VERTEX2F(x * 16, y * 16);
-        eve.END();
-
-        eve.DISPLAY();
-        eve.CMD_SWAP();
-
-        eve.LIB_EndCoProList();
-        eve.LIB_AwaitCoProEmpty();
-    }
+    while(rtiREG1->CNT[0].FRCx < splash_ticks);
 
     rtiStopCounter(rtiCOUNTER_BLOCK0);
+
+    eve.LIB_BeginCoProList();
+    eve.CMD_DLSTART();
+
+    eve.CLEAR_COLOR_RGB(0, 0, 0);
+    eve.CLEAR(1, 1, 1);
+
+    eve.DISPLAY();
+    eve.CMD_SWAP();
+
+    eve.LIB_EndCoProList();
+    eve.LIB_AwaitCoProEmpty();
 }
 
 
