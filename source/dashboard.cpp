@@ -148,6 +148,79 @@ static bool race_find_warning(const dashboard_data_t *d, uint8_t *driver, uint8_
     return false;
 }
 
+// Charging overlay: shown on every page while charging. Touching it hides it for
+// CHARGING_SNOOZE_FRAMES, after which it comes back if charging is still active.
+#define DASHBOARD_DRAW_HZ 30
+#define CHARGING_SNOOZE_FRAMES (DASHBOARD_DRAW_HZ * 8)
+// Pack voltage shown as 0 %. 100 % is the voltage commanded to the charger (0x611 B0-B1).
+#define CHARGE_EMPTY_VOLTAGE 72.5f
+
+static bool s_charging_overlay = false;
+static uint16_t s_charging_snooze = 0;
+static uint32_t s_charging_anim = 0;
+
+// Brake alert: raised when drive is requested without the brake pressed. Closed by a
+// touch or automatically once the front brake exceeds DRIVE_ENABLE_MIN_BRAKE_PSI.
+static bool s_brake_alert = false;
+
+void dashboard_brake_alert_raise(void)
+{
+    if(!s_brake_alert)
+    {
+        dashboard_log_event(0, LOG_WARNING, "Drive blocked: press brake");
+    }
+    s_brake_alert = true;
+}
+
+bool dashboard_brake_alert_is_active(void)
+{
+    return s_brake_alert;
+}
+
+void dashboard_brake_alert_acknowledge(void)
+{
+    s_brake_alert = false;
+}
+
+// Implausibility alert (0x401): the main ECU forced drive off. The frame is one-shot, so the
+// alert stays up until it is closed by a touch or the driver re-enables drive.
+static uint8_t s_implausibility = 0;
+
+void dashboard_implausibility_raise(uint8_t flags)
+{
+    uint8_t added = (uint8_t)(flags & (uint8_t)~s_implausibility);
+    if(added & IMPLAUSIBILITY_TPS)
+    {
+        dashboard_log_event(0, LOG_FAULT, "TPS implausibility: drive OFF");
+    }
+    if(added & IMPLAUSIBILITY_BRAKE)
+    {
+        dashboard_log_event(0, LOG_FAULT, "Brake implausibility: drive OFF");
+    }
+    s_implausibility |= flags;
+}
+
+void dashboard_implausibility_clear(void)
+{
+    s_implausibility = 0;
+}
+
+bool dashboard_implausibility_is_active(void)
+{
+    return s_implausibility != 0;
+}
+
+bool dashboard_charging_overlay_is_active(void)
+{
+    return s_charging_overlay;
+}
+
+void dashboard_charging_overlay_acknowledge(void)
+{
+    s_charging_overlay = false;
+    s_charging_snooze = CHARGING_SNOOZE_FRAMES;
+}
+
 bool dashboard_race_overlay_is_active(void)
 {
     return s_race_overlay != RACE_OVERLAY_NONE;
@@ -524,6 +597,278 @@ static void draw_fault_overlay(Bridgetek_EVE2 &eve, uint8_t driver, uint8_t erro
     eve.CMD_TEXT(240, 170, 21, Bridgetek_EVE2::OPT_CENTER, "TOUCH TO CLOSE");
 }
 
+static void draw_round_rect(Bridgetek_EVE2 &eve, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t r)
+{
+    eve.LINE_WIDTH(r * 16);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F((x0 + r) * 16, (y0 + r) * 16);
+    eve.VERTEX2F((x1 - r) * 16, (y1 - r) * 16);
+    eve.END();
+}
+
+static void draw_brake_alert_overlay(Bridgetek_EVE2 &eve, const dashboard_data_t *d)
+{
+    char line[40];
+
+    eve.SAVE_CONTEXT();
+    eve.TAG(255);
+
+    // Same style as the fault overlay
+    eve.COLOR_RGB(190, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(0, 0);
+    eve.VERTEX2F(480 * 16, 272 * 16);
+    eve.END();
+
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(240, 60, 31, Bridgetek_EVE2::OPT_CENTER, "PRESS BRAKE");
+    eve.CMD_TEXT(240, 102, 28, Bridgetek_EVE2::OPT_CENTER, "Brake must be pressed to enable drive");
+
+    // Live front brake pressure against the required threshold
+    const int16_t x0 = 90, x1 = 390, y0 = 138, y1 = 162;
+    float ratio = d->brake_front / DRIVE_ENABLE_MIN_BRAKE_PSI;
+    if(ratio < 0.0f) ratio = 0.0f;
+    if(ratio > 1.0f) ratio = 1.0f;
+    int16_t fill_w = (int16_t)((float)(x1 - x0 - 8) * ratio);
+
+    eve.COLOR_RGB(110, 0, 0);
+    draw_round_rect(eve, x0, y0, x1, y1, 8);
+    if(fill_w >= 8)
+    {
+        eve.COLOR_RGB(255, 255, 255);
+        draw_round_rect(eve, x0 + 4, y0 + 4, x0 + 4 + fill_w, y1 - 4, 4);
+    }
+
+    sprintf(line, "FRONT BRAKE %d / %d PSI", (int)d->brake_front, (int)DRIVE_ENABLE_MIN_BRAKE_PSI);
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(240, 186, 28, Bridgetek_EVE2::OPT_CENTER, line);
+
+    eve.CMD_TEXT(240, 236, 21, Bridgetek_EVE2::OPT_CENTER, "TOUCH TO CLOSE");
+
+    eve.RESTORE_CONTEXT();
+}
+
+static void draw_implausibility_overlay(Bridgetek_EVE2 &eve)
+{
+    const char *title = "IMPLAUSIBILITY";
+    if(s_implausibility == IMPLAUSIBILITY_TPS)
+    {
+        title = "TPS IMPLAUSIBILITY";
+    }
+    else if(s_implausibility == IMPLAUSIBILITY_BRAKE)
+    {
+        title = "BRAKE IMPLAUSIBILITY";
+    }
+
+    eve.SAVE_CONTEXT();
+    eve.TAG(255);
+
+    // Same style as the brake alert
+    eve.COLOR_RGB(190, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(0, 0);
+    eve.VERTEX2F(480 * 16, 272 * 16);
+    eve.END();
+
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(240, 60, 31, Bridgetek_EVE2::OPT_CENTER, title);
+    if(s_implausibility == (IMPLAUSIBILITY_TPS | IMPLAUSIBILITY_BRAKE))
+    {
+        eve.CMD_TEXT(240, 102, 28, Bridgetek_EVE2::OPT_CENTER, "TPS + BRAKE");
+    }
+    eve.CMD_TEXT(240, 140, 28, Bridgetek_EVE2::OPT_CENTER, "Drive disabled by main ECU");
+    eve.CMD_TEXT(240, 186, 28, Bridgetek_EVE2::OPT_CENTER, "Enable drive to restart");
+    eve.CMD_TEXT(240, 236, 21, Bridgetek_EVE2::OPT_CENTER, "TOUCH TO CLOSE");
+
+    eve.RESTORE_CONTEXT();
+}
+
+// EV.4.7 APPS/brake plausibility (0x403). Not closable by touch: it goes away by itself
+// when the main ECU releases it (throttle below 5 %). Drive stays enabled.
+static void draw_apps_brake_plausibility_overlay(Bridgetek_EVE2 &eve)
+{
+    eve.SAVE_CONTEXT();
+    eve.TAG(255);
+
+    // Same style as the fault overlay
+    eve.COLOR_RGB(190, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(0, 0);
+    eve.VERTEX2F(480 * 16, 272 * 16);
+    eve.END();
+
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(240, 70, 31, Bridgetek_EVE2::OPT_CENTER, "APPS / BRAKE");
+    eve.CMD_TEXT(240, 112, 31, Bridgetek_EVE2::OPT_CENTER, "PLAUSIBILITY");
+    eve.CMD_TEXT(240, 170, 30, Bridgetek_EVE2::OPT_CENTER, "SOLTAR ACELERADOR");
+    eve.CMD_TEXT(240, 226, 21, Bridgetek_EVE2::OPT_CENTER, "Motors stopped by main ECU");
+
+    eve.RESTORE_CONTEXT();
+}
+
+// Sensor CAN timeout (0x403 b1). Not closable by touch: it goes away when the main ECU clears it.
+// Drive stays off and has to be enabled again by the driver afterwards.
+static void draw_sensor_can_timeout_overlay(Bridgetek_EVE2 &eve, uint8_t flags)
+{
+    char line[40];
+    line[0] = '\0';
+    if(flags & SENSOR_TIMEOUT_TPS)         strcat(line, "TPS");
+    if(flags & SENSOR_TIMEOUT_FRONT_BRAKE) strcat(line, (line[0] != '\0') ? " / FRENO DEL" : "FRENO DEL");
+    if(flags & SENSOR_TIMEOUT_REAR_BRAKE)  strcat(line, (line[0] != '\0') ? " / FRENO TRAS" : "FRENO TRAS");
+
+    eve.SAVE_CONTEXT();
+    eve.TAG(255);
+
+    // Same style as the fault overlay
+    eve.COLOR_RGB(190, 0, 0);
+    eve.BEGIN(eve.BEGIN_RECTS);
+    eve.VERTEX2F(0, 0);
+    eve.VERTEX2F(480 * 16, 272 * 16);
+    eve.END();
+
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(240, 60, 31, Bridgetek_EVE2::OPT_CENTER, "SENSOR CAN TIMEOUT");
+    eve.CMD_TEXT(240, 112, 29, Bridgetek_EVE2::OPT_CENTER, line);
+    eve.CMD_TEXT(240, 170, 28, Bridgetek_EVE2::OPT_CENTER, "Drive disabled by main ECU");
+    eve.CMD_TEXT(240, 226, 21, Bridgetek_EVE2::OPT_CENTER, "Enable drive again once cleared");
+
+    eve.RESTORE_CONTEXT();
+}
+
+// Formats a value with one decimal without relying on printf float support.
+static void format_tenths(char *out, float value, const char *unit)
+{
+    int32_t t = (int32_t)(value * 10.0f + ((value < 0.0f) ? -0.5f : 0.5f));
+    const char *sign = "";
+    if(t < 0)
+    {
+        sign = "-";
+        t = -t;
+    }
+    sprintf(out, "%s%ld.%ld %s", sign, (long)(t / 10), (long)(t % 10), unit);
+}
+
+static uint8_t charge_percent(const dashboard_data_t *d)
+{
+    float full = d->charge_cmd_voltage;
+    if(full <= CHARGE_EMPTY_VOLTAGE)
+    {
+        return 0;
+    }
+    float pct = (d->charge_voltage - CHARGE_EMPTY_VOLTAGE) * 100.0f / (full - CHARGE_EMPTY_VOLTAGE);
+    if(pct < 0.0f) pct = 0.0f;
+    if(pct > 100.0f) pct = 100.0f;
+    return (uint8_t)(pct + 0.5f);
+}
+
+static void draw_charge_tile(Bridgetek_EVE2 &eve, int16_t x0, int16_t x1, const char *label,
+                             float value, float target, const char *unit)
+{
+    const int16_t y0 = 162;
+    const int16_t y1 = 234;
+    char line[24];
+
+    eve.COLOR_RGB(22, 32, 27);
+    draw_round_rect(eve, x0, y0, x1, y1, 8);
+
+    // Accent strip
+    eve.COLOR_RGB(0, 230, 118);
+    draw_round_rect(eve, x0 + 6, y0 + 12, x0 + 10, y1 - 12, 2);
+
+    eve.COLOR_RGB(140, 160, 150);
+    eve.CMD_TEXT(x0 + 20, y0 + 8, 21, 0, label);
+
+    format_tenths(line, value, unit);
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(x0 + 20, y0 + 30, 30, 0, line);
+}
+
+static void draw_charging_overlay(Bridgetek_EVE2 &eve, const dashboard_data_t *d)
+{
+    char line[24];
+    uint8_t pct = charge_percent(d);
+
+    eve.SAVE_CONTEXT();
+
+    eve.TAG(255);
+
+    // Background
+    eve.CMD_GRADIENT(0, 0, 0x06201A, 0, 272, 0x000000);
+
+    // Header: lightning bolt + title
+    eve.COLOR_RGB(255, 214, 0);
+    eve.LINE_WIDTH(3 * 16);
+    eve.BEGIN(eve.BEGIN_LINE_STRIP);
+    eve.VERTEX2F(160 * 16, 14 * 16);
+    eve.VERTEX2F(150 * 16, 32 * 16);
+    eve.VERTEX2F(162 * 16, 32 * 16);
+    eve.VERTEX2F(152 * 16, 50 * 16);
+    eve.END();
+
+    eve.COLOR_RGB(0, 230, 118);
+    eve.CMD_TEXT(250, 32, 30, Bridgetek_EVE2::OPT_CENTER, "CHARGING");
+
+    // Battery body + terminal
+    const int16_t bx0 = 70, by0 = 66, bx1 = 390, by1 = 146;
+    eve.COLOR_RGB(200, 210, 205);
+    draw_round_rect(eve, bx0, by0, bx1, by1, 10);
+    draw_round_rect(eve, bx1 + 2, 90, bx1 + 14, 122, 4);
+    eve.COLOR_RGB(8, 16, 12);
+    draw_round_rect(eve, bx0 + 4, by0 + 4, bx1 - 4, by1 - 4, 7);
+
+    // Fill, colored by charge level
+    const int16_t fx0 = bx0 + 8, fy0 = by0 + 8, fx1 = bx1 - 8, fy1 = by1 - 8;
+    int16_t fill_w = (int16_t)(((int32_t)(fx1 - fx0) * pct) / 100);
+    if(fill_w >= 8)
+    {
+        if(pct < 20)      eve.COLOR_RGB(255, 60, 60);
+        else if(pct < 50) eve.COLOR_RGB(255, 176, 0);
+        else              eve.COLOR_RGB(0, 200, 100);
+        draw_round_rect(eve, fx0, fy0, fx0 + fill_w, fy1, 4);
+
+        // Moving shine inside the fill to show that energy is flowing
+        const int16_t band = 36;
+        int16_t pos = (int16_t)((s_charging_anim * 4U) % (uint32_t)(fill_w + band)) - band;
+        eve.SCISSOR_XY(fx0, fy0);
+        eve.SCISSOR_SIZE(fill_w, fy1 - fy0);
+        eve.COLOR_RGB(255, 255, 255);
+        eve.COLOR_A(55);
+        eve.BEGIN(eve.BEGIN_RECTS);
+        eve.LINE_WIDTH(16);
+        eve.VERTEX2F((fx0 + pos) * 16, fy0 * 16);
+        eve.VERTEX2F((fx0 + pos + band) * 16, fy1 * 16);
+        eve.END();
+        eve.COLOR_A(255);
+        eve.SCISSOR_XY(0, 0);
+        eve.SCISSOR_SIZE(480, 272);
+    }
+
+    // Percentage with a soft shadow so it stays readable over any fill color
+    sprintf(line, "%u%%", (unsigned)pct);
+    eve.COLOR_RGB(0, 0, 0);
+    eve.COLOR_A(140);
+    eve.CMD_TEXT(232, 108, 31, Bridgetek_EVE2::OPT_CENTER, line);
+    eve.COLOR_A(255);
+    eve.COLOR_RGB(255, 255, 255);
+    eve.CMD_TEXT(230, 106, 31, Bridgetek_EVE2::OPT_CENTER, line);
+
+    // Voltage / current tiles
+    draw_charge_tile(eve, 24, 234, "VOLTAGE", d->charge_voltage, d->charge_cmd_voltage, "V");
+    draw_charge_tile(eve, 246, 456, "CURRENT", d->charge_current, d->charge_cmd_current, "A");
+
+    // Footer
+    if(d->charger_flags != 0)
+    {
+        eve.COLOR_RGB(255, 176, 0);
+        sprintf(line, "FLAGS 0x%02X", (unsigned)d->charger_flags);
+        eve.CMD_TEXT(24, 254, 20, Bridgetek_EVE2::OPT_CENTERY, line);
+    }
+    eve.COLOR_RGB(110, 125, 118);
+    eve.CMD_TEXT(240, 254, 20, Bridgetek_EVE2::OPT_CENTER, "TOUCH TO CLOSE");
+
+    eve.RESTORE_CONTEXT();
+}
+
 
 /**************************************************************************************
  * Functions to initialize and update the dashboard data, and to draw the dashboard   
@@ -585,8 +930,8 @@ void init_dashboard(dashboard_data_t *data)
     // Buttons and mode
     data->canopen_state = 0;
     data->drive_enabled = 0;
-    data->traction_on = 0;
-    data->telemetry_enabled = 0;
+    data->traction_on = 1;
+    data->telemetry_enabled = 1;
     data->mode = 0;
 
     data->cal_tps_0 = 0;
@@ -597,6 +942,18 @@ void init_dashboard(dashboard_data_t *data)
     data->cal_current_sensors = 0;
 
     data->cal_screen = 0;
+
+    data->charging = 0;
+    data->charger_flags = 0;
+    data->charge_cmd_voltage = 0;
+    data->charge_cmd_current = 0;
+    data->charge_voltage = 0;
+    data->charge_current = 0;
+    s_charging_overlay = false;
+    s_charging_snooze = 0;
+    s_implausibility = 0;
+    data->apps_brake_plausibility = 0;
+    data->sensor_can_timeout = 0;
 
     
 
@@ -632,6 +989,7 @@ void update_dashboard_data(dashboard_data_t *data)
     static uint8_t prev_drv2_warn = NO_WARNING;
     static uint8_t prev_drv2_err = NO_FAULT;
     static uint8_t prev_can_state = BOOTUP;
+    static uint8_t prev_charging = 0;
 
     s_log_tick++;
 
@@ -666,6 +1024,7 @@ void update_dashboard_data(dashboard_data_t *data)
         prev_drv2_warn = data->driver2_warning;
         prev_drv2_err = data->driver2_error;
         prev_can_state = data->canopen_state;
+        prev_charging = data->charging;
         prev_valid = true;
         return;
     }
@@ -677,6 +1036,12 @@ void update_dashboard_data(dashboard_data_t *data)
         sprintf(log_text, "CAN %s -> %s", canopen_to_str(prev_can_state), canopen_to_str(data->canopen_state));
         dashboard_log_event(0, LOG_INFO, log_text);
         prev_can_state = data->canopen_state;
+    }
+
+    if(data->charging != prev_charging)
+    {
+        dashboard_log_event(0, LOG_INFO, data->charging ? "Charging started" : "Charging stopped");
+        prev_charging = data->charging;
     }
 
     if(data->driver1_warning != prev_drv1_warn)
@@ -1351,7 +1716,61 @@ void update_dashboard_draw(Bridgetek_EVE2 &eve, dashboard_data_t *d)
         eve.TAG(255);
     }
 
-    if(!(current_page == PAGE_RACE && dashboard_race_overlay_is_active()))
+    // Charging overlay (any page). A race warning/fault overlay has priority.
+    if(d->charging)
+    {
+        if(s_charging_snooze > 0)
+        {
+            s_charging_snooze--;
+        }
+        else
+        {
+            s_charging_overlay = true;
+        }
+    }
+    else
+    {
+        s_charging_overlay = false;
+        s_charging_snooze = 0;
+    }
+
+    bool race_overlay = (current_page == PAGE_RACE && dashboard_race_overlay_is_active());
+    bool charging_overlay = s_charging_overlay && !race_overlay;
+    if(charging_overlay)
+    {
+        s_charging_anim++;
+        draw_charging_overlay(eve, d);
+    }
+
+    // Implausibility alert (any page), below the brake alert so a blocked re-enable is still visible.
+    if(s_implausibility)
+    {
+        draw_implausibility_overlay(eve);
+    }
+
+    // APPS/brake plausibility (any page), above the implausibility alert: it needs immediate action.
+    if(d->apps_brake_plausibility)
+    {
+        draw_apps_brake_plausibility_overlay(eve);
+    }
+
+    // Sensor CAN timeout (any page): drive is off and cannot be enabled while it lasts.
+    if(d->sensor_can_timeout)
+    {
+        draw_sensor_can_timeout_overlay(eve, d->sensor_can_timeout);
+    }
+
+    // Brake alert (any page) is drawn on top of everything; it closes itself once the brake is pressed.
+    if(s_brake_alert && d->brake_front > DRIVE_ENABLE_MIN_BRAKE_PSI)
+    {
+        dashboard_brake_alert_acknowledge();
+    }
+    if(s_brake_alert)
+    {
+        draw_brake_alert_overlay(eve, d);
+    }
+
+    if(!race_overlay && !charging_overlay && !s_implausibility && !s_brake_alert && !d->apps_brake_plausibility && !d->sensor_can_timeout)
     {
         draw_navigation_bar(eve);
     }

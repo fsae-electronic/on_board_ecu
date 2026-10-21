@@ -36,8 +36,8 @@ void ui_draw_rpm_bar(Bridgetek_EVE2 &eve, float rpm)
         80,
         30,
         31,
-        Bridgetek_EVE2::OPT_CENTER,
-        rpm
+        Bridgetek_EVE2::OPT_CENTER | Bridgetek_EVE2::OPT_SIGNED, // without OPT_SIGNED, -3 rpm is drawn as 4294967293
+        (int32_t)rpm
     );
     eve.CMD_TEXT(
         160,

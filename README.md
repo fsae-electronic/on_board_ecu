@@ -109,8 +109,9 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | 8 | RX | `0x282` | `motor_data_t` |
 | 9 | RX | `0x381` | `driver_data_t` |
 | 10 | RX | `0x382` | `driver_data_t` |
-| 11 | RX | `0x401` | `main_ecu_data_t` |
+| 11 | RX | `0x401` | `implausibility_data_t` |
 | 12 | RX | `0x700` | `canopen_heartbeat_t` |
+| 16 | RX | `0x403` | `main_ecu_errors_t` |
 | 17 | TX | `0x402` | `buttons_data_t` |
 | 18 | TX | `0x600` | `calibration_cmd_t` |
 
@@ -124,12 +125,13 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `0x504` | `rear_data_t` | `b0-b1 = rear_brake_pressure`, `b2-b7 = libre` |
 | `0x181` | `driver_status_t` | `b0-b1 = status_word`, `b2-b3 = warning`, `b4-b5 = error`, `b6-b7 = libre` |
 | `0x182` | `driver_status_t` | igual que `0x181` |
-| `0x281` | `motor_data_t` | `b0-b1 = motor_velocity`, `b2-b3 = motor_rated_current`, `b4 = motor_temp`, `b5-b7 = libre` |
+| `0x281` | `motor_data_t` | `b0-b3 = motor_velocity` (0x606C), `b4-b5 = driver_dc_voltage` (0x6079), `b6-b7 = libre` |
 | `0x282` | `motor_data_t` | igual que `0x281` |
-| `0x381` | `driver_data_t` | `b0 = driver_temp`,  `b1-b2 = driver_dc_voltage`, `b3-b7 = libre` |
+| `0x381` | `driver_data_t` | `b0-b3 = motor_rated_current` (0x6075), `b4 = driver_temp` (0x2026:1), `b5 = motor_temp` (0x2025), `b6-b7 = libre` |
 | `0x382` | `driver_data_t` | igual que `0x381` |
 | `0x700` | `canopen_heartbeat_t` | `b0 = canopen_state`, `b1-b7 = libre` |
-| `0x401` | `main_ecu_data_t` | `b0 = tps`, `b1 = mode`, `b2 = error_code`, `b3-b7 = libre` |
+| `0x401` | `implausibility_data_t` | `b0 = tps_implausibility`, `b1 = brake_implausibility`, `b2-b7 = 0x00` |
+| `0x403` | `main_ecu_errors_t` | `b0 = apps_brake_plausibility`, `b1 = sensor_can_timeout` (bitmask), `b2-b7 = 0x00` (reservados) |
 
 
 ### Frame transmitido
@@ -158,6 +160,37 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 | `0xD` | `telemetry` enable | - |
 | `0xE` | `telemetry` disable | - |
 
+### Implausibilidad (ID `0x401`)
+
+Lo mandan `adc2can_front` y `adc2can_rear` hacia la main ECU, una sola vez por falla (no es periodico).
+
+| Byte | Significado |
+| --- | --- |
+| `b0` | `1` = TPS implausibility, `0` = no |
+| `b1` | `1` = brake implausibility, `0` = no |
+| `b2-b7` | `0x00` |
+
+La main ECU fuerza drive off (igual que `cmd_id = 8` en `0x600`) y queda frenada hasta recibir un `cmd_id = 7`. El on-board ECU lo escucha en el box 11: si `b0` o `b1` != 0 pone `drive_enabled = 0` **sin** mandar `0x600` ni `0x402` (asi el proximo toque del boton manda directamente `cmd_id = 7`) y muestra el aviso en pantalla hasta que se toque la pantalla o el piloto vuelva a habilitar drive (cerrar el aviso no habilita drive).
+
+### Errores de la main ECU (ID `0x403`)
+
+| Byte | Significado |
+| --- | --- |
+| `b0` | `1` = APPS/brake plausibility activa (motores detenidos), `0` = no |
+| `b1` | Timeouts de CAN de sensores (bitmask): bit 0 = no llega `0x501` (TPS, `adc2can_front`), bit 1 = no llega `0x502` (freno delantero, `adc2can_front`), bit 2 = no llega `0x504` (freno trasero, `adc2can_rear`) |
+| `b2-b7` | `0x00` (reservados para futuros errores de la main ECU) |
+
+Se manda en cada cambio y cada 100 ms mientras `b0` o `b1` != 0. Sin error no se manda periodicamente. El on-board ECU lo escucha en el box 16; como respaldo, si hay un error activo y no llega ningun `0x403` por ~300 ms, limpia `b0` y `b1`.
+
+**`b0` - APPS / Brake Pedal Plausibility (EV.4.7).** Si el freno esta apretado (presion delantera o trasera > 50 PSI) y cualquiera de los dos TPS marca mas de 25 %, la main ECU detiene los motores hasta que el acelerador baja de 5 %, con o sin freno. Despues retoma **sola**: no hace falta tocar el boton de drive ni mandar ningun `0x600` (a diferencia de `0x401`). El on-board ECU actualiza `dashboard_data.apps_brake_plausibility` y mientras esta activo muestra en cualquier pagina el aviso "APPS / BRAKE PLAUSIBILITY - SOLTAR ACELERADOR" (no se cierra con un toque). Lo registra en el log (`LOG_FAULT` al activarse, `LOG_INFO` al liberarse). No modifica `drive_enabled` ni manda `0x402`/`0x600`.
+
+**`b1` - Sensor CAN timeout.** Un mensaje esta en timeout si no llego en mas de 100 ms (o nunca llego). Mientras `b1` != 0 la main ECU fuerza drive off y no lo acepta; cuando vuelve a 0 hay que volver a habilitar drive (`cmd_id = 7`). El on-board ECU actualiza `dashboard_data.sensor_can_timeout` y mientras es != 0:
+- pone `drive_enabled = 0` en cada ciclo **sin** mandar `0x600` ni `0x402`, asi el boton queda coherente con la main ECU y se ignoran los pedidos de habilitar drive (boton o touch);
+- muestra en cualquier pagina el aviso "SENSOR CAN TIMEOUT" con los sensores afectados (`TPS / FRENO DEL / FRENO TRAS`), que no se cierra con un toque y desaparece cuando `b1` vuelve a 0;
+- registra en el log un `LOG_FAULT` por cada sensor que entra en timeout y un `LOG_INFO` cuando se liberan todos.
+
+Al liberarse, drive queda en OFF: el proximo toque del boton manda directamente `cmd_id = 7`.
+
 ### CANopen heartbeat (ID `0x700`)
 
 | Byte 0 | Estado |
@@ -175,13 +208,14 @@ Todos los frames usan 8 bytes. El orden de bytes en la tabla es el orden del pay
 - `driver_status_t`: estado, warning y error del driver.
 - `motor_data_t`: velocidad de motor, corriente nominal y temperatura.
 - `driver_data_t`: temperatura y tension del driver.
-- `main_ecu_data_t`: estado interno del sistema.
+- `implausibility_data_t`: implausibilidad de TPS/freno avisada por `adc2can_front`/`adc2can_rear` (`0x401`).
+- `main_ecu_errors_t`: errores de la main ECU (`0x403`: APPS/brake plausibility EV.4.7 y timeouts de CAN de sensores).
 - `buttons_data_t`: botones que publica el on-board ECU en `0x402`.
 - `calibration_cmd_t`: comando de calibracion o cambio de estado de boton/modo por `cmd_id` + `value` (TX en `0x600`).
 
 ## Warnings y errores
 
-Los valores simbolicos estan en [source/dashboard.h](source/dashboard.h). En el dashboard se copian tal como llegan en `driver_status_t` y `main_ecu_data_t`.
+Los valores simbolicos estan en [source/dashboard.h](source/dashboard.h). En el dashboard se copian tal como llegan en `driver_status_t`.
 
 ### Driver status word
 
@@ -242,12 +276,3 @@ Los valores simbolicos estan en [source/dashboard.h](source/dashboard.h). En el 
 | `ERROR_DC_LINK_OVERVOLTAGE` | `0x3210` |
 | `ERROR_UNKNOWN` | `0xFFFF` |
 
-### Main ECU errors
-
-| Nombre | Valor |
-| --- | ---: |
-| `MAIN_ECU_NO_ERROR` | `0` |
-| `MAIN_ECU_TPS_IMPLAUSIBILITY` | `1` |
-| `MAIN_ECU_BREAK_IMPLAUSIBILITY` | `2` |
-| `MAIN_ECU_SAFETY_SHUTDOWN` | `3` |
-| `MAIN_ECU_OTHER_ERROR` | `4` |

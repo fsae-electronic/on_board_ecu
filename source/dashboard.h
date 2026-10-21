@@ -63,16 +63,6 @@ enum driver_error_code_t
 
 
 
-enum main_ecu_error_code_t
-{
-    MAIN_ECU_NO_ERROR = 0,
-    MAIN_ECU_TPS_IMPLAUSIBILITY,
-    MAIN_ECU_BREAK_IMPLAUSIBILITY,
-    MAIN_ECU_SAFETY_SHUTDOWN,
-    MAIN_ECU_OTHER_ERROR
-};
-
-
 enum canopen_state_t
 {
     BOOTUP = 0x00,
@@ -139,10 +129,6 @@ typedef struct
     uint8_t driver2_warning;
     uint8_t driver2_error;
 
-    uint8_t main_ecu_tps;
-    uint8_t main_ecu_mode;
-    uint8_t main_ecu_error_code; // Internal error code
-    
     //Buttons and modes
     uint8_t canopen_state;
     
@@ -159,6 +145,18 @@ typedef struct
     uint8_t cal_current_sensors;
 
     uint8_t cal_screen;
+
+    // Main ECU errors (0x403)
+    uint8_t apps_brake_plausibility; // 1 = EV.4.7 APPS/brake plausibility active (motors stopped)
+    uint8_t sensor_can_timeout;      // SENSOR_TIMEOUT_* bitmask, drive forced off while != 0
+
+    // Charger (0x610 / 0x611)
+    uint8_t charging;
+    uint8_t charger_flags;
+    float charge_cmd_voltage;  // V
+    float charge_cmd_current;  // A
+    float charge_voltage;      // V, reported by the charger
+    float charge_current;      // A, reported by the charger
 
 
 
@@ -208,5 +206,29 @@ void dashboard_logs_scroll(int delta);
 void dashboard_logs_clear(void);
 bool dashboard_race_overlay_is_active(void);
 void dashboard_race_overlay_acknowledge(void);
+// Minimum front brake pressure required to enable drive.
+#define DRIVE_ENABLE_MIN_BRAKE_PSI 50.0f
+
+void dashboard_brake_alert_raise(void);
+bool dashboard_brake_alert_is_active(void);
+void dashboard_brake_alert_acknowledge(void);
+
+// Sensor CAN timeouts reported by the main ECU on 0x403 b1 (no frame for > 100 ms or never received).
+#define SENSOR_TIMEOUT_TPS         0x01U // 0x501, adc2can_front
+#define SENSOR_TIMEOUT_FRONT_BRAKE 0x02U // 0x502, adc2can_front
+#define SENSOR_TIMEOUT_REAR_BRAKE  0x04U // 0x504, adc2can_rear
+#define SENSOR_TIMEOUT_MASK        0x07U
+
+// Implausibility reported on 0x401 (bitmask, both can be active at once).
+#define IMPLAUSIBILITY_TPS   0x01U
+#define IMPLAUSIBILITY_BRAKE 0x02U
+
+// Latched until closed by a touch or the driver re-enables drive (the 0x401 frame arrives only once).
+void dashboard_implausibility_raise(uint8_t flags);
+void dashboard_implausibility_clear(void);
+bool dashboard_implausibility_is_active(void);
+
+bool dashboard_charging_overlay_is_active(void);
+void dashboard_charging_overlay_acknowledge(void);
 
 #endif // DASHBOARD_H

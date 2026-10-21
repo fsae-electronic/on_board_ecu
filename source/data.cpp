@@ -21,11 +21,15 @@ motor_data_t motor2_data(MOTOR2_DATA_ID);
 driver_data_t driver1_data(DRIVER1_DATA_ID);
 driver_data_t driver2_data(DRIVER2_DATA_ID);
 
-main_ecu_data_t main_ecu_data;
+implausibility_data_t implausibility_data;
+main_ecu_errors_t main_ecu_errors;
 
 buttons_data_t buttons_data;
 canopen_heartbeat_t canopen_heartbeat;
 calibration_cmd_t calibration_cmd;
+
+charger_cmd_t charger_cmd;
+charger_data_t charger_data;
 
 void init_data(void)
 {
@@ -79,7 +83,7 @@ void update_data(void)
         // Reconstruct 16-bit values from raw bytes explicitly (little-endian: LSB first)
         uint16_t fl_speed = (uint16_t)front_data.raw[0] | ((uint16_t)front_data.raw[1] << 8);
         uint16_t fr_speed = (uint16_t)front_data.raw[2] | ((uint16_t)front_data.raw[3] << 8);
-        uint16_t direction = (uint16_t)front_data.raw[4] | ((uint16_t)front_data.raw[5] << 8);
+        int16_t direction = (int16_t)((uint16_t)front_data.raw[4] | ((uint16_t)front_data.raw[5] << 8)); // signed: negative = left of center
         uint16_t front_brake = (uint16_t)front_data.raw[6] | ((uint16_t)front_data.raw[7] << 8);
 
         dashboard_data.wheel_speed_fl = (float)fl_speed;
@@ -132,51 +136,117 @@ void update_data(void)
     {
         canGetData(canREG1, canMESSAGE_BOX7, motor1_data.raw);
         int32_t mv1 = (int32_t)motor1_data.raw[0] | ((int32_t)motor1_data.raw[1] << 8) | ((int32_t)motor1_data.raw[2] << 16) | ((int32_t)motor1_data.raw[3] << 24);
-        uint32_t mrc1 = (uint32_t)motor1_data.raw[4] | ((uint32_t)motor1_data.raw[5] << 8) | ((uint32_t)motor1_data.raw[6] << 16) | ((uint32_t)motor1_data.raw[7] << 24);
+        uint16_t d1volt = (uint16_t)motor1_data.raw[4] | ((uint16_t)motor1_data.raw[5] << 8);
 
         dashboard_data.wheel_speed_rl = (-1.0f)*(float)mv1; // Assuming motor velocity can be used to calculate rear wheel speed
-        dashboard_data.motor1_rated_current = (float)mrc1;
+        dashboard_data.driver1_dc_voltage = (float)d1volt/10.0f;
         motor1_data.new_data = false;
     }
     if (motor2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX8, motor2_data.raw);
         int32_t mv2 = (int32_t)motor2_data.raw[0] | ((int32_t)motor2_data.raw[1] << 8) | ((int32_t)motor2_data.raw[2] << 16) | ((int32_t)motor2_data.raw[3] << 24);
-        uint32_t mrc2 = (uint32_t)motor2_data.raw[4] | ((uint32_t)motor2_data.raw[5] << 8) | ((uint32_t)motor2_data.raw[6] << 16) | ((uint32_t)motor2_data.raw[7] << 24);
+        uint16_t d2volt = (uint16_t)motor2_data.raw[4] | ((uint16_t)motor2_data.raw[5] << 8);
 
         dashboard_data.wheel_speed_rr = (-1.0f)*(float)mv2; // Assuming motor velocity can be used to calculate rear wheel speed
-        dashboard_data.motor2_rated_current = (float)mrc2;
+        dashboard_data.driver2_dc_voltage = (float)d2volt/10.0f;
         motor2_data.new_data = false;
     }
     if (driver1_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX9, driver1_data.raw);
-        uint8_t d1temp = driver1_data.raw[0];
-        uint16_t d1volt = (uint16_t)driver1_data.raw[1] | ((uint16_t)driver1_data.raw[2] << 8);
-        uint8_t m1temp = driver1_data.raw[3];
+        uint32_t mrc1 = (uint32_t)driver1_data.raw[0] | ((uint32_t)driver1_data.raw[1] << 8) | ((uint32_t)driver1_data.raw[2] << 16) | ((uint32_t)driver1_data.raw[3] << 24);
+        uint8_t d1temp = driver1_data.raw[4];
+        uint8_t m1temp = driver1_data.raw[5];
+        dashboard_data.motor1_rated_current = (float)mrc1;
         dashboard_data.driver1_temp = (float)d1temp;
-        dashboard_data.driver1_dc_voltage = (float)d1volt/10.0f;
         dashboard_data.motor1_temp = (float)m1temp;
         driver1_data.new_data = false;
     }
     if (driver2_data.new_data)
     {
         canGetData(canREG1, canMESSAGE_BOX10, driver2_data.raw);
-        uint8_t d2temp = driver2_data.raw[0];
-        uint16_t d2volt = (uint16_t)driver2_data.raw[1] | ((uint16_t)driver2_data.raw[2] << 8);
-        uint8_t m2temp = driver2_data.raw[3];
+        uint32_t mrc2 = (uint32_t)driver2_data.raw[0] | ((uint32_t)driver2_data.raw[1] << 8) | ((uint32_t)driver2_data.raw[2] << 16) | ((uint32_t)driver2_data.raw[3] << 24);
+        uint8_t d2temp = driver2_data.raw[4];
+        uint8_t m2temp = driver2_data.raw[5];
+        dashboard_data.motor2_rated_current = (float)mrc2;
         dashboard_data.driver2_temp = (float)d2temp;
-        dashboard_data.driver2_dc_voltage = (float)d2volt/10.0f;
         dashboard_data.motor2_temp = (float)m2temp;
         driver2_data.new_data = false;
     }
-    if (main_ecu_data.new_data)
+    if (implausibility_data.new_data)
     {
-        canGetData(canREG1, canMESSAGE_BOX11, main_ecu_data.raw);
-        main_ecu_data.values.tps = dashboard_data.main_ecu_tps; // Use the averaged TPS value from the dashboard
-        main_ecu_data.values.mode = dashboard_data.main_ecu_mode;
-        main_ecu_data.values.error_code = dashboard_data.main_ecu_error_code; // No error for now, can
-        main_ecu_data.new_data = false;
+        canGetData(canREG1, canMESSAGE_BOX11, implausibility_data.raw);
+        uint8_t flags = 0;
+        if (implausibility_data.values.tps_implausibility != 0U)   flags |= IMPLAUSIBILITY_TPS;
+        if (implausibility_data.values.brake_implausibility != 0U) flags |= IMPLAUSIBILITY_BRAKE;
+
+        if (flags != 0U)
+        {
+            // The main ECU already forced drive off. Mirror it locally WITHOUT sending a 0x600:
+            // updating last_drive_enabled too keeps the change detection below silent, so the
+            // next press of the drive button sends CAL_CMD_DRIVE_ENABLE_ON directly.
+            dashboard_data.drive_enabled = 0;
+            last_drive_enabled = 0;
+            dashboard_implausibility_raise(flags);
+        }
+        implausibility_data.new_data = false;
+    }
+
+    // EV.4.7 APPS/brake plausibility (0x403). The main ECU resumes on its own once the throttle
+    // drops below 5 %, so this never touches drive_enabled nor sends any 0x600.
+    static uint16_t main_ecu_errors_timeout = 0;
+    auto set_apps_brake_plausibility = [](uint8_t active)
+    {
+        if (active && !dashboard_data.apps_brake_plausibility)
+        {
+            dashboard_log_event(0, LOG_FAULT, "APPS/brake plausibility: motors stopped");
+        }
+        else if (!active && dashboard_data.apps_brake_plausibility)
+        {
+            dashboard_log_event(0, LOG_INFO, "APPS/brake plausibility released");
+        }
+        dashboard_data.apps_brake_plausibility = active;
+    };
+    // Sensor CAN timeouts (0x403 b1). The main ECU forces drive off while any bit is set and
+    // needs a new CAL_CMD_DRIVE_ENABLE_ON once they clear.
+    auto set_sensor_can_timeout = [](uint8_t flags)
+    {
+        uint8_t added = (uint8_t)(flags & (uint8_t)~dashboard_data.sensor_can_timeout);
+        if (added & SENSOR_TIMEOUT_TPS)         dashboard_log_event(0, LOG_FAULT, "CAN timeout: TPS (0x501)");
+        if (added & SENSOR_TIMEOUT_FRONT_BRAKE) dashboard_log_event(0, LOG_FAULT, "CAN timeout: front brake (0x502)");
+        if (added & SENSOR_TIMEOUT_REAR_BRAKE)  dashboard_log_event(0, LOG_FAULT, "CAN timeout: rear brake (0x504)");
+        if ((flags == 0U) && (dashboard_data.sensor_can_timeout != 0U))
+        {
+            dashboard_log_event(0, LOG_INFO, "Sensor CAN timeout released");
+        }
+        dashboard_data.sensor_can_timeout = flags;
+    };
+    if (main_ecu_errors.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX16, main_ecu_errors.raw);
+        set_apps_brake_plausibility((main_ecu_errors.values.apps_brake_plausibility == 1U) ? 1U : 0U);
+        set_sensor_can_timeout((uint8_t)(main_ecu_errors.values.sensor_can_timeout & SENSOR_TIMEOUT_MASK));
+        main_ecu_errors_timeout = 0;
+        main_ecu_errors.new_data = false;
+    }
+    else if (dashboard_data.apps_brake_plausibility || dashboard_data.sensor_can_timeout)
+    {
+        // 0x403 is repeated every 100 ms while active: if it stops arriving, assume it was released.
+        if (++main_ecu_errors_timeout >= MAIN_ECU_ERRORS_TIMEOUT_TICKS)
+        {
+            set_apps_brake_plausibility(0);
+            set_sensor_can_timeout(0);
+            main_ecu_errors_timeout = 0;
+        }
+    }
+    if (dashboard_data.sensor_can_timeout)
+    {
+        // The main ECU forced drive off and rejects it while the timeout lasts. Mirror it locally
+        // WITHOUT sending a 0x600 (last_drive_enabled = 0 keeps the change detection below silent),
+        // also rejecting any request to enable drive from the button or the touch screen.
+        dashboard_data.drive_enabled = 0;
+        last_drive_enabled = 0;
     }
     if (canopen_heartbeat.new_data)
     {
@@ -184,10 +254,52 @@ void update_data(void)
         dashboard_data.canopen_state = canopen_heartbeat.values.canopen_state;
         canopen_heartbeat.new_data = false;
     }
+
+    static uint16_t charger_timeout = 0;
+    if (charger_cmd.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX14, charger_cmd.raw);
+        dashboard_data.charging = (charger_cmd.raw[0] == 1U) ? 1U : 0U;
+        dashboard_data.charger_flags = charger_cmd.raw[1];
+        charger_timeout = 0;
+        charger_cmd.new_data = false;
+    }
+    else if (dashboard_data.charging)
+    {
+        // 0x610 comes every 500 ms while charging: if it stops arriving, charging ended.
+        if (++charger_timeout >= CHARGER_TIMEOUT_TICKS)
+        {
+            dashboard_data.charging = 0;
+            charger_timeout = 0;
+        }
+    }
+    if (charger_data.new_data)
+    {
+        canGetData(canREG1, canMESSAGE_BOX15, charger_data.raw);
+        uint16_t cmd_v  = (uint16_t)charger_data.raw[0] | ((uint16_t)charger_data.raw[1] << 8);
+        uint16_t cmd_i  = (uint16_t)charger_data.raw[2] | ((uint16_t)charger_data.raw[3] << 8);
+        uint16_t meas_v = (uint16_t)charger_data.raw[4] | ((uint16_t)charger_data.raw[5] << 8);
+        uint16_t meas_i = (uint16_t)charger_data.raw[6] | ((uint16_t)charger_data.raw[7] << 8);
+
+        dashboard_data.charge_cmd_voltage = (float)cmd_v / 10.0f;
+        dashboard_data.charge_cmd_current = (float)cmd_i / 10.0f;
+        dashboard_data.charge_voltage = (float)meas_v / 10.0f;
+        dashboard_data.charge_current = (float)meas_i / 400.0f;
+        charger_data.new_data = false;
+    }
     // Process data
     dashboard_data.rpm = (dashboard_data.wheel_speed_rl + dashboard_data.wheel_speed_rr) / 2.0f;
     dashboard_data.battery_voltage = (dashboard_data.driver1_dc_voltage + dashboard_data.driver2_dc_voltage) / 2.0f;
     dashboard_data.battery_current = (dashboard_data.driver1_dc_current + dashboard_data.driver2_dc_current);
+
+    // Safety: drive can only be enabled with the front brake pressed. Any OFF -> ON request
+    // (physical input or touch) without enough brake pressure is rejected before it is sent.
+    if (dashboard_data.drive_enabled && (last_drive_enabled != 1U) &&
+        !(dashboard_data.brake_front > DRIVE_ENABLE_MIN_BRAKE_PSI))
+    {
+        dashboard_data.drive_enabled = 0;
+        dashboard_brake_alert_raise();
+    }
 
     buttons_data.values.drive_enabled = (uint8_t)dashboard_data.drive_enabled;
     buttons_data.values.traction_on = (uint8_t)dashboard_data.traction_on;
@@ -210,6 +322,10 @@ void update_data(void)
     // on button state changes, one dedicated cmd_id per action.
     if (buttons_data.values.drive_enabled != last_drive_enabled)
     {
+        if (buttons_data.values.drive_enabled)
+        {
+            dashboard_implausibility_clear(); // Drive re-enabled by the driver: the fault was acknowledged
+        }
         send_calibration_cmd(buttons_data.values.drive_enabled ? CAL_CMD_DRIVE_ENABLE_ON : CAL_CMD_DRIVE_ENABLE_OFF);
     }
     if (buttons_data.values.traction_on != last_traction_on)

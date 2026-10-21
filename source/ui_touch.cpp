@@ -236,10 +236,34 @@ void ui_handle_touch(Bridgetek_EVE2 &eve, dashboard_data_t *data)
         bool had_touch = touch_active;
         touch_active = false;
 
+        // La alerta de freno se dibuja encima de todo: el toque la cierra primero.
+        if(had_touch && dashboard_brake_alert_is_active())
+        {
+            dashboard_brake_alert_acknowledge();
+            last_key = 0;
+            return;
+        }
+
+        // Aviso de implausibilidad (TPS / freno): cualquier toque lo cierra. Drive sigue en OFF.
+        if(had_touch && dashboard_implausibility_is_active())
+        {
+            dashboard_implausibility_clear();
+            last_key = 0;
+            return;
+        }
+
         // En RACE, si hay overlay activo (warning/fault), cualquier toque lo cierra.
         if(had_touch && current_page == PAGE_RACE && dashboard_race_overlay_is_active())
         {
             dashboard_race_overlay_acknowledge();
+            last_key = 0;
+            return;
+        }
+
+        // Si se está mostrando la pantalla de carga, cualquier toque la oculta por unos segundos.
+        if(had_touch && dashboard_charging_overlay_is_active())
+        {
+            dashboard_charging_overlay_acknowledge();
             last_key = 0;
             return;
         }
